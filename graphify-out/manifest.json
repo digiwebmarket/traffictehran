@@ -1,0 +1,357 @@
+{
+  "Dump20260615/citibig-remote-app/assets/js/chart.js": {
+    "mtime": 1791029117.033909,
+    "ast_hash": "3cf395c5f5e4c79e91a28f3ce30aba73",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-remote-app/assets/js/leaflet.js": {
+    "mtime": 1791029117.0368137,
+    "ast_hash": "f7a3fe98f3eb12ae0e6cff8019a0a672",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-remote-app/citibig-bridge.php": {
+    "mtime": 1791029117.0625534,
+    "ast_hash": "27d43261b3a52d30439a590d016c08f8",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-transit-dashboard/assets/js/chart.js": {
+    "mtime": 1791029117.0877905,
+    "ast_hash": "3cf395c5f5e4c79e91a28f3ce30aba73",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-transit-dashboard/assets/js/citibig-charts.js": {
+    "mtime": 1791029117.0888765,
+    "ast_hash": "9e744cb080c63e87a95eaee55166197b",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-transit-dashboard/assets/js/leaflet.js": {
+    "mtime": 1791029117.092757,
+    "ast_hash": "f7a3fe98f3eb12ae0e6cff8019a0a672",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-transit-dashboard/citibig-transit-dashboard.php": {
+    "mtime": 1791029117.0938475,
+    "ast_hash": "54487f0063cf9482c5085e9fd1a54fbd",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-transit-dashboard/includes/class-citibig-admin.php": {
+    "mtime": 1791029117.0955012,
+    "ast_hash": "d2f792977235b9ad8e877f08df9b2bdb",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-transit-dashboard/includes/class-citibig-api.php": {
+    "mtime": 1791029117.0966544,
+    "ast_hash": "9d4f90ebaa6d2e5aad544ec11b1c93ca",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-transit-dashboard/includes/class-citibig-assets.php": {
+    "mtime": 1791029117.0972571,
+    "ast_hash": "e9d38f6e43d6ca39e8d8befffe3be8fe",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-transit-dashboard/includes/class-citibig-db.php": {
+    "mtime": 1791029117.0984466,
+    "ast_hash": "0ed0d0cf8a9e4ff533db08545a30a603",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-transit-dashboard/includes/class-citibig-shortcode.php": {
+    "mtime": 1791029117.102115,
+    "ast_hash": "9344e20900bece0284487a23bac5c3c2",
+    "semantic_hash": ""
+  },
+  "Dump20260615/deploy-v2.py": {
+    "mtime": 1791300266.5310314,
+    "ast_hash": "cb0c8b205dcc5c57e79758758a49b709",
+    "semantic_hash": ""
+  },
+  "Dump20260615/deploy.py": {
+    "mtime": 1791297779.4384832,
+    "ast_hash": "8335b1a23bd3ad94190aa794bd614e49",
+    "semantic_hash": ""
+  },
+  "Dump20260615/tahatehran_new_Color.sql": {
+    "mtime": 1787078808.0,
+    "ast_hash": "9f923d97b12c628ed368e85fbce8ade2",
+    "semantic_hash": ""
+  },
+  "Dump20260615/tahatehran_new_History.sql": {
+    "mtime": 1787078702.0,
+    "ast_hash": "45a6f863e0ff85e114ac463cf953f7fb",
+    "semantic_hash": ""
+  },
+  "Dump20260615/tahatehran_new_Local.sql": {
+    "mtime": 1787078699.0,
+    "ast_hash": "7f1a752f8bea3e8e3050a25603d43d0d",
+    "semantic_hash": ""
+  },
+  "Dump20260615/tahatehran_new_Route.sql": {
+    "mtime": 1787078692.0,
+    "ast_hash": "4e49c05c9d1ddbfe735889bd88bb98f8",
+    "semantic_hash": ""
+  },
+  "Dump20260615/tahatehran_new_Route_Station.sql": {
+    "mtime": 1787078677.0,
+    "ast_hash": "6b807d368c64309a7591f230767629f1",
+    "semantic_hash": ""
+  },
+  "Dump20260615/tahatehran_new_Route_Status.sql": {
+    "mtime": 1787078817.0,
+    "ast_hash": "3bf2ba327a8454b39135db30379cf924",
+    "semantic_hash": ""
+  },
+  "Dump20260615/tahatehran_new_Schedule.sql": {
+    "mtime": 1787078682.0,
+    "ast_hash": "632b4f3f80390ddd09ca1ce484f1ca1d",
+    "semantic_hash": ""
+  },
+  "Dump20260615/tahatehran_new_Station.sql": {
+    "mtime": 1787078670.0,
+    "ast_hash": "45eea9d1621398b82964c818033579a8",
+    "semantic_hash": ""
+  },
+  "Dump20260615/tahatehran_new_Station_Status.sql": {
+    "mtime": 1787078689.0,
+    "ast_hash": "c318f0e738114f3bf0eed40a1d657d7b",
+    "semantic_hash": ""
+  },
+  "Dump20260615/tahatehran_new_code_eta.sql": {
+    "mtime": 1787078801.0,
+    "ast_hash": "76e802c83b8dd8371bde4d1a9d3530e1",
+    "semantic_hash": ""
+  },
+  "Dump20260615/tahatehran_new_device_station_mapping.sql": {
+    "mtime": 1790180741.0,
+    "ast_hash": "b774b9ca1d5b7c5193e442b6dbbf89ad",
+    "semantic_hash": ""
+  },
+  "Dump20260615/tahatehran_new_ip_whitelist.sql": {
+    "mtime": 1790180740.0,
+    "ast_hash": "d4796bd850538ebdb3d2eda730a53005",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/next-env.d.ts": {
+    "mtime": 1791297206.4695754,
+    "ast_hash": "c68600c0eb0d34c34bfc0f4b2547e31f",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/next.config.mjs": {
+    "mtime": 1791298662.4735749,
+    "ast_hash": "5a644ed4d2bffd5d9a1ec24979c3066e",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/package.json": {
+    "mtime": 1791295535.007862,
+    "ast_hash": "5b918e1500e21f07ee49d4f01fe4a855",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/postcss.config.mjs": {
+    "mtime": 1791295618.698207,
+    "ast_hash": "c735540bb63936a123bc867d950c9f69",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/public/citibig-bridge.php": {
+    "mtime": 1791029117.0625534,
+    "ast_hash": "27d43261b3a52d30439a590d016c08f8",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/public/js/leaflet.js": {
+    "mtime": 1791029117.0368137,
+    "ast_hash": "f7a3fe98f3eb12ae0e6cff8019a0a672",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/app/(auth)/login/page.tsx": {
+    "mtime": 1791296672.3840942,
+    "ast_hash": "ede69da531198e8f1184d62db800979f",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/app/(dashboard)/devices/page.tsx": {
+    "mtime": 1791296858.5936487,
+    "ast_hash": "67658176d2a567e63e05e0073b3cfe4b",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/app/(dashboard)/eta/page.tsx": {
+    "mtime": 1791297041.3067029,
+    "ast_hash": "9ee6a3b58ab5a0753c491ce01a9cede3",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/app/(dashboard)/layout.tsx": {
+    "mtime": 1791296695.4860766,
+    "ast_hash": "295ad8b54765037360284931b553697b",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/app/(dashboard)/page.tsx": {
+    "mtime": 1791296727.08726,
+    "ast_hash": "1cb85ffe875aa9bb91b96e20f1bd81e1",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/app/(dashboard)/routes/page.tsx": {
+    "mtime": 1791302949.4285414,
+    "ast_hash": "e3d4fdab9d5b9de304399e5ba0bb6bfa",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/app/(dashboard)/stations/page.tsx": {
+    "mtime": 1791302926.8845773,
+    "ast_hash": "ba0d7424ba7b99390f8c975348c067d0",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/app/(dashboard)/users/page.tsx": {
+    "mtime": 1791296894.7690573,
+    "ast_hash": "d36dd623fd1a9aeabc2186eba35b186b",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/app/layout.tsx": {
+    "mtime": 1791299879.1764874,
+    "ast_hash": "54b59ee5436323e3cc02597cf9786728",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/components/layout/Header.tsx": {
+    "mtime": 1791296599.3671033,
+    "ast_hash": "7ba5579f3ea4d478fd8a7660e8949803",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/components/layout/Sidebar.tsx": {
+    "mtime": 1791296572.6732898,
+    "ast_hash": "1d3bc12b03a9e7ee15011f06246e8ceb",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/components/ui/AdvancedFilterBar.tsx": {
+    "mtime": 1791296440.3780093,
+    "ast_hash": "176458f8a2a66ea3b0e953bef9e39ead",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/components/ui/Button.tsx": {
+    "mtime": 1791296280.0925975,
+    "ast_hash": "83bb7f81f081c4e5d24b75a93d8b7e83",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/components/ui/Card.tsx": {
+    "mtime": 1791296258.2646282,
+    "ast_hash": "dd3cff50f744e952056718be0293d048",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/components/ui/ChartWidgets.tsx": {
+    "mtime": 1791296541.6573598,
+    "ast_hash": "e1f844631d0a40a41da6bf24a11ee7bb",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/components/ui/DataTable.tsx": {
+    "mtime": 1791297001.539401,
+    "ast_hash": "cc3c2aa03d19cded963cd3ba6944a035",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/components/ui/Input.tsx": {
+    "mtime": 1791296341.605532,
+    "ast_hash": "346919e835780553b1368d8763c56e77",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/components/ui/InteractiveMap.tsx": {
+    "mtime": 1791302870.1946359,
+    "ast_hash": "e05201f2032a36b4deafc3ccb46d15cf",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/components/ui/SearchableSelect.tsx": {
+    "mtime": 1791296383.8269193,
+    "ast_hash": "136c9cc32ccb23506f9fa42a2d50919e",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/components/ui/StatusBadge.tsx": {
+    "mtime": 1791296359.0732665,
+    "ast_hash": "efeeb47502d3d38110c65baf2cfbdda5",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/lib/api.ts": {
+    "mtime": 1791303177.962245,
+    "ast_hash": "a5d27496ac463129da96ecd2fb30b757",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/lib/auth.ts": {
+    "mtime": 1791296098.0711157,
+    "ast_hash": "83bc2aa27375277c63a0aca9cadab63d",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/lib/utils.ts": {
+    "mtime": 1791295978.4786057,
+    "ast_hash": "d7b9083d38a8b298f29fa5a7306c866e",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/src/lib/validations.ts": {
+    "mtime": 1791296001.5707948,
+    "ast_hash": "10a68b90ed3a54ed9a26804ea4691de8",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/tailwind.config.ts": {
+    "mtime": 1791295633.9931395,
+    "ast_hash": "600f5cce6aa974dbe0ca0ea5240a73bd",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/tsconfig.json": {
+    "mtime": 1791295604.252161,
+    "ast_hash": "9e8e85dd889bfae0a2cc2abaa73655ee",
+    "semantic_hash": ""
+  },
+  "Dump20260615/HANDOFF.md": {
+    "mtime": 1791297881.0597134,
+    "ast_hash": "cc012c2e112cf829b0c69308e648a43d",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-remote-app/index.html": {
+    "mtime": 1791029117.066178,
+    "ast_hash": "bd88fdd3d9824b26dea7f8317b2e74dc",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-remote-app/assets/css/images/marker-icon-2x.png": {
+    "mtime": 1791029116.9979515,
+    "ast_hash": "401d815dc206b8dc1b17cd0e37695975",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-remote-app/assets/css/images/marker-icon.png": {
+    "mtime": 1791029116.999102,
+    "ast_hash": "2273e3d8ad9264b7daa5bdbf8e6b47f8",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-remote-app/assets/css/images/marker-shadow.png": {
+    "mtime": 1791029116.9997394,
+    "ast_hash": "44a526eed258222515aa21eaffd14a96",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-remote-app/assets/images/logo.png": {
+    "mtime": 1791029117.0292552,
+    "ast_hash": "9f3c5e2510ec2fb6070418fbc5381abe",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-transit-dashboard/assets/css/images/marker-icon-2x.png": {
+    "mtime": 1791029117.0733025,
+    "ast_hash": "401d815dc206b8dc1b17cd0e37695975",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-transit-dashboard/assets/css/images/marker-icon.png": {
+    "mtime": 1791029117.0740268,
+    "ast_hash": "2273e3d8ad9264b7daa5bdbf8e6b47f8",
+    "semantic_hash": ""
+  },
+  "Dump20260615/citibig-transit-dashboard/assets/css/images/marker-shadow.png": {
+    "mtime": 1791029117.0750031,
+    "ast_hash": "44a526eed258222515aa21eaffd14a96",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/public/css/images/marker-icon-2x.png": {
+    "mtime": 1791029116.9979515,
+    "ast_hash": "401d815dc206b8dc1b17cd0e37695975",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/public/css/images/marker-icon.png": {
+    "mtime": 1791029116.999102,
+    "ast_hash": "2273e3d8ad9264b7daa5bdbf8e6b47f8",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/public/css/images/marker-shadow.png": {
+    "mtime": 1791029116.9997394,
+    "ast_hash": "44a526eed258222515aa21eaffd14a96",
+    "semantic_hash": ""
+  },
+  "traffic-frontend/public/images/logo.png": {
+    "mtime": 1791029117.0292552,
+    "ast_hash": "9f3c5e2510ec2fb6070418fbc5381abe",
+    "semantic_hash": ""
+  }
+}
