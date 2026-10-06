@@ -1,7 +1,7 @@
-import { getStoredSession } from './auth';
+﻿import { getStoredSession } from './auth';
 
 const DEFAULT_BRIDGE_URL = typeof window !== 'undefined' && window.location.hostname === 'dev.citibig.com'
-  ? './citibig-bridge.php'
+  ? '/v2tehrandashboard/citibig-bridge.php'
   : 'https://dev.citibig.com/tehrandashboard/citibig-bridge.php';
 
 const BRIDGE_URL = process.env.NEXT_PUBLIC_BRIDGE_URL || DEFAULT_BRIDGE_URL;
@@ -90,7 +90,70 @@ export interface DashboardChartsData {
 }
 
 export async function apiGetCharts(): Promise<DashboardChartsData> {
-  return request<DashboardChartsData>('/charts', { method: 'GET' });
+  const raw: any = await request<any>('/charts', { method: 'GET' });
+
+  // Map backend structure from class-citibig-api.php (cached_db_data)
+  const kpi = raw?.kpi || {};
+  const rawColors = Array.isArray(raw?.colors) ? raw.colors : [];
+  const rawRoutes = Array.isArray(raw?.routes) ? raw.routes : [];
+  const rawBusTypes = Array.isArray(raw?.bustypes) ? raw.bustypes : [];
+  const rawStations = Array.isArray(raw?.stations) ? raw.stations : [];
+  const rawEtas = Array.isArray(raw?.etas) ? raw.etas : [];
+
+  const summary = {
+    stations: Number(kpi.stations || 0),
+    routes: Number(kpi.routes || 0),
+    devices: Number(kpi.locals || 0),
+    eta_records: Number(kpi.etas || rawEtas.length || 0),
+  };
+
+  const colors = {
+    labels: rawColors.map((c: any) => c.Color_Type || 'سایر'),
+    values: rawColors.map((c: any) => Number(c.count || 0)),
+  };
+
+  const routes = {
+    labels: rawRoutes.map((r: any) => String(r.Route_Name || r.code || '').replace('مسیر ', '')),
+    values: rawRoutes.map((r: any) => Number(r.station_count || 0)),
+  };
+
+  const busTypeMap: Record<string, string> = {
+    Private: 'بخش خصوصی',
+    Public: 'بخش عمومی',
+    Auxiliary: 'کمکی',
+    BRT: 'تندرو (BRT)',
+  };
+
+  const bus_types = {
+    labels: rawBusTypes.map((b: any) => busTypeMap[b.Bus_Type] || b.Bus_Type || 'نامشخص'),
+    values: rawBusTypes.map((b: any) => Number(b.count || 0)),
+  };
+
+  const stations_map = rawStations.map((s: any) => ({
+    code: s.code,
+    name: s.Station_Name,
+    custom_name: s.station_custom || null,
+    lat: Number(s.Latitude || 0),
+    lng: Number(s.Longitude || 0),
+  }));
+
+  const live_eta = rawEtas.map((e: any) => ({
+    id: e.code,
+    Line: String(e.code || ''),
+    Station_Name: e.Station_Name || '',
+    ETA: String(e.eta || e.eta_minutes || 0) + ' min',
+    Time: e.updated_at || '',
+  }));
+
+  return {
+    summary,
+    colors,
+    routes,
+    bus_types,
+    live_eta,
+    stations_map,
+    display_toggles: raw?.toggles || {},
+  };
 }
 
 // 3. Stations API
@@ -107,10 +170,10 @@ export async function apiGetStations(): Promise<StationItem[]> {
   return Array.isArray(res) ? res : (res.data || []);
 }
 
-export async function apiUpdateStationCustom(code: string | number, station_custom: string) {
-  return request('/stations/custom-name', {
+export async function apiUpdateStationCustom(id: string | number, station_custom: string) {
+  return request('/stations/' + id + '/custom', {
     method: 'PUT',
-    body: JSON.stringify({ code, station_custom }),
+    body: JSON.stringify({ station_custom }),
   });
 }
 
@@ -129,10 +192,10 @@ export async function apiGetRoutes(): Promise<RouteItem[]> {
   return Array.isArray(res) ? res : (res.data || []);
 }
 
-export async function apiUpdateRouteCustom(code: string | number, terminal1_custom: string, terminal2_custom: string) {
-  return request('/routes/custom-name', {
+export async function apiUpdateRouteCustom(id: string | number, terminal1_custom: string, terminal2_custom: string) {
+  return request('/routes/' + id + '/custom', {
     method: 'PUT',
-    body: JSON.stringify({ code, terminal1_custom, terminal2_custom }),
+    body: JSON.stringify({ Terminal1_custom: terminal1_custom, Terminal2_custom: terminal2_custom }),
   });
 }
 
@@ -191,3 +254,5 @@ export async function apiCreateUser(payload: { username: string; password?: stri
 export async function apiDeleteUser(username: string) {
   return request(`/users/${encodeURIComponent(username)}`, { method: 'DELETE' });
 }
+
+

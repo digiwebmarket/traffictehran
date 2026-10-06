@@ -73,7 +73,7 @@ export default function StationsPage() {
     if (!editingStation) return;
     setIsSaving(true);
     try {
-      await apiUpdateStationCustom(editingStation.code, customNameInput.trim());
+      await apiUpdateStationCustom(editingStation.id || editingStation.code, customNameInput.trim());
       // Update local state
       setStations((prev) =>
         prev.map((s) =>

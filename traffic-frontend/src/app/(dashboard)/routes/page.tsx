@@ -77,7 +77,7 @@ export default function RoutesPage() {
     if (!editingRoute) return;
     setIsSaving(true);
     try {
-      await apiUpdateRouteCustom(editingRoute.code, term1Custom.trim(), term2Custom.trim());
+      await apiUpdateRouteCustom(editingRoute.id || editingRoute.code, term1Custom.trim(), term2Custom.trim());
       // Update local state
       setRoutes((prev) =>
         prev.map((r) =>
