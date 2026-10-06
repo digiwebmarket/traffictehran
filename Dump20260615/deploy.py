@@ -54,11 +54,21 @@ def upload_directory(ftp, local_dir, remote_dir):
             upload_file(ftp, lp, rp)
 
 def deploy_frontend(ftp, config):
-    print("\n--- Deploying Frontend (Remote App) ---")
+    print("\n--- Deploying Frontend (Remote App - Vanilla JS) ---")
     local_frontend = BASE_DIR / 'citibig-remote-app'
     remote_frontend = config['FTP_REMOTE_FRONTEND']
     upload_directory(ftp, str(local_frontend), remote_frontend)
     print("Frontend deployed successfully.")
+
+def deploy_next_frontend(ftp, config):
+    print("\n--- Deploying Next.js 15 Frontend (Static Export) ---")
+    local_frontend = BASE_DIR.parent / 'traffic-frontend' / 'out'
+    if not local_frontend.exists():
+        print(f"Error: Build output directory not found at {local_frontend}. Run 'npm run build' inside traffic-frontend first.")
+        return
+    remote_frontend = config['FTP_REMOTE_FRONTEND']
+    upload_directory(ftp, str(local_frontend), remote_frontend)
+    print("Next.js frontend deployed successfully.")
 
 def deploy_plugin(ftp, config):
     print("\n--- Deploying WordPress Plugin ---")
@@ -96,15 +106,17 @@ if __name__ == '__main__':
     try:
         if target == 'frontend':
             deploy_frontend(ftp, config)
+        elif target == 'next':
+            deploy_next_frontend(ftp, config)
         elif target == 'plugin':
             deploy_plugin(ftp, config)
         elif target == 'all':
-            deploy_frontend(ftp, config)
+            deploy_next_frontend(ftp, config)
             deploy_plugin(ftp, config)
         elif target == 'test':
-            print("FTP Connection test passed! Available target commands: frontend, plugin, all")
+            print("FTP Connection test passed! Available target commands: frontend, next, plugin, all")
     finally:
         ftp.quit()
 
-    if target in ('frontend', 'plugin', 'all'):
+    if target in ('frontend', 'next', 'plugin', 'all'):
         test_live()

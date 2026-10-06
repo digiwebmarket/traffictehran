@@ -119,19 +119,32 @@ The user requested the ability to edit custom names for **Stations** (`station.s
       - Updated `applyDisplayToggles` to never reveal device management to operator even if enabled in WP admin toggles.
     - **Backend API Layer (`class-citibig-api.php`):**
       - Added `check_devices_view_auth` permission callback on `GET /devices` endpoint, strictly restricting device list retrieval to `admin` and `supervisor`. Operator requests receive `403 Forbidden`.
-    - **Deployment & Sync:**
-      - Successfully deployed to `http://dev.citibig.com/tehrandashboard/` (HTTP 200).
-      - Repackaged zip archives and committed changes to Git.
+12. **Next.js 15 Modular Frontend Migration (`traffic-frontend/`):**
+    - **Architecture & Foundation:**
+      - Created standalone, modern Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSS project inside `traffic-frontend/`.
+      - Built using modular design-system components adapted from `afkarsanji-next` (`DataTable`, `AdvancedFilterBar`, `SearchableSelect`, `InteractiveMap`, `ChartWidgets`, `Card`, `Button`, `Input`, `StatusBadge`).
+      - Output configured for static export (`output: 'export'`) in `next.config.mjs`, enabling pure HTML/JS/CSS output deployed to `/public_html/tehrandashboard/` on shared hosting.
+    - **Feature & Page Coverage:**
+      - `(auth)/login`: Modern glassmorphic login screen with token & role storage.
+      - `(dashboard)/`: Live Overview with 4 KPI cards, 3 interactive charts (Colors distribution, Routes station density, Bus types share), and a Leaflet map of Tehran stations.
+      - `(dashboard)/eta`: Live ETA monitoring table with 30s auto-refresh and field-level filters.
+      - `(dashboard)/stations`: Stations management table with search and modal for editing `station_custom`.
+      - `(dashboard)/routes`: Routes and terminals table with modal for editing `terminal1_custom` and `terminal2_custom`.
+      - `(dashboard)/devices`: Devices & display mapping table with strict 15-digit IMEI validation, IPv4/IPv6 validation, and station Searchable Combobox. Strictly hidden from Operator role.
+      - `(dashboard)/users`: User accounts and roles table with add-user modal. Strictly hidden from Operator role.
+    - **Build & Deployment:**
+      - Static production build verified (`npm run build`), generating 10 prerendered static pages in `traffic-frontend/out/`.
+      - Updated `Dump20260615/deploy.py` to support `python deploy.py next` for one-command FTP deployment of the Next.js frontend to production.
 
 ## References
 For deep-dives into the thought process, tasks, and walkthroughs of this session, refer to the artifacts generated during this conversation:
-- **Implementation Plan:** `C:\Users\Administrator\.gemini\antigravity\brain\cca3f95e-29aa-4531-bb40-9edbf91346f7\implementation_plan.md`
-- **Walkthrough/Changelog:** `C:\Users\Administrator\.gemini\antigravity\brain\cca3f95e-29aa-4531-bb40-9edbf91346f7\walkthrough.md`
+- **Implementation Plan:** `C:\Users\Top1seo\.gemini\antigravity\brain\1a8ef14e-522a-4046-a8eb-c2da8261f2b9\implementation_plan.md`
+- **GitHub Repository:** `https://github.com/digiwebmarket/traffictehran.git`
 - **Git Commit:** Review the most recent commits (`git log --oneline`).
 
 ## Suggested Skills for the Next Agent
 To continue working on this project effectively, consider using the following skills if requested by the user:
-- `graphify-windows`: If you need to quickly map out the architecture, DB schema, or file relationships.
+- `graphify-windows`: To inspect or update the codebase knowledge graph.
 - `git-safety-workflow`: To ensure all subsequent modifications are cleanly versioned.
-- `frontend` or `taste`: If further visual polishing or UI additions are requested on `index.html`.
+
 
