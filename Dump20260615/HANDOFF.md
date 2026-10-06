@@ -19,6 +19,7 @@ The project is a transit management system split into a WordPress backend (which
 - **Remote App Frontend Directory:** `/public_html/tehrandashboard/`
   - Web URL: `http://dev.citibig.com/tehrandashboard/`
   - Core files on host: `index.html`, `citibig-bridge.php`, `assets/`, `citibig-remote-app.zip`
+- **GitHub Repository:** `https://github.com/digiwebmarket/traffictehran.git` (Branch: `main`)
 - **Remote Transit Database (Connected via WordPress Plugin Settings):**
   - Host / IP: `2.144.22.6`
   - Port: `5010`
