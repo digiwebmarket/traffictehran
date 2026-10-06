@@ -42,7 +42,7 @@ export function InteractiveMap({
       const link = document.createElement('link');
       link.id = 'leaflet-css';
       link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      link.href = '/v2tehrandashboard/css/leaflet.css';
       document.head.appendChild(link);
     }
 
@@ -53,7 +53,7 @@ export function InteractiveMap({
         return;
       }
       const script = document.createElement('script');
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.src = '/v2tehrandashboard/js/leaflet.js';
       script.onload = () => setIsReady(true);
       document.body.appendChild(script);
     };

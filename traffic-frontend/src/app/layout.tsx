@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl" className="dark">
       <head>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <link rel="stylesheet" href="/v2tehrandashboard/css/leaflet.css" />
       </head>
       <body className="min-h-screen bg-[#070913] text-slate-100 antialiased selection:bg-brand-500 selection:text-white">
         {children}
