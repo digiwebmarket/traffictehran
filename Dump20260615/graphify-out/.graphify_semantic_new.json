@@ -1,0 +1,94 @@
+{
+  "nodes": [
+    {
+      "id": "images_logo_asset",
+      "label": "Tehran Traffic Control Company Logo Image",
+      "file_type": "image",
+      "source_file": "citibig-remote-app/assets/images/logo.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "images_logo_tehran_traffic_control_company",
+      "label": "Tehran Traffic Control Company (شرکت کنترل ترافیک تهران)",
+      "file_type": "concept",
+      "source_file": "citibig-remote-app/assets/images/logo.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "logo_png",
+      "label": "Tehran Traffic Control Company Logo",
+      "file_type": "image",
+      "source_file": "logo.PNG",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "logo_tehran_traffic_control_company",
+      "label": "Tehran Traffic Control Company (شرکت کنترل ترافیک تهران)",
+      "file_type": "concept",
+      "source_file": "logo.PNG",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "logo_traffic_management_system",
+      "label": "Municipal Traffic Control & Monitoring",
+      "file_type": "concept",
+      "source_file": "logo.PNG",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "images_logo_asset",
+      "target": "images_logo_tehran_traffic_control_company",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.99,
+      "source_file": "citibig-remote-app/assets/images/logo.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "logo_png",
+      "target": "logo_tehran_traffic_control_company",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.99,
+      "source_file": "logo.PNG",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "logo_tehran_traffic_control_company",
+      "target": "logo_traffic_management_system",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.92,
+      "source_file": "logo.PNG",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

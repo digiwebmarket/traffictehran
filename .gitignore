@@ -1,0 +1,23 @@
+# Environment & Credentials
+.env
+*.env
+
+# Large archives & Dumps
+*.zip
+*.tar.gz
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Graphify cache
+graphify-out/cache/
+
+# Syncthing temporary & conflict files
+*sync-conflict*
+~syncthing~*
+*.tmp
+
+# System files
+Thumbs.db
+.DS_Store

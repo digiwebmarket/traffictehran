@@ -1,0 +1,2453 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد هوشمند حمل و نقل سیتی بیگ</title>
+    <!-- Fonts & Libraries (Offline) -->
+    <link rel="stylesheet" href="./assets/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="./assets/js/chart.js"></script>
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="./assets/css/leaflet.css" />
+    <script src="./assets/js/leaflet.js"></script>
+
+    <style>
+        @font-face {
+            font-family: 'IRANSansX';
+            src: url('./assets/fonts/IRANSansX-Regular.woff2') format('woff2'),
+                 url('./assets/fonts/IRANSansX-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'IRANSansX';
+            src: url('./assets/fonts/IRANSansX-Bold.woff2') format('woff2'),
+                 url('./assets/fonts/IRANSansX-Bold.woff') format('woff');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        :root {
+            --bg-color: #070913;
+            --surface: rgba(13, 18, 33, 0.65);
+            --surface-hover: rgba(23, 31, 56, 0.85);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --primary-glow: rgba(14, 165, 233, 0.2);
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.15);
+            --danger: #f43f5e;
+            --danger-glow: rgba(244, 63, 94, 0.15);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-glow: rgba(245, 158, 11, 0.15);
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --layout-bg: radial-gradient(circle at 80% 20%, #0c1126 0%, #04050a 100%);
+            --login-bg: radial-gradient(circle at center, #0f1326 0%, #030408 100%);
+            --sphere-1-color: radial-gradient(circle, rgba(14, 165, 233, 0.35) 0%, rgba(14, 165, 233, 0) 70%);
+            --sphere-2-color: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(139, 92, 246, 0) 70%);
+            --sidebar-bg: rgba(10, 14, 28, 0.75);
+        }
+
+        body.light-theme {
+            --bg-color: #f1f5f9;
+            --surface: rgba(255, 255, 255, 0.8);
+            --surface-hover: rgba(255, 255, 255, 0.95);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #0ea5e9;
+            --primary-hover: #0284c7;
+            --primary-glow: rgba(14, 165, 233, 0.1);
+            --border: rgba(15, 23, 42, 0.08);
+            --border-hover: rgba(15, 23, 42, 0.18);
+            --danger: #e11d48;
+            --danger-glow: rgba(225, 29, 72, 0.1);
+            --success: #16a34a;
+            --success-glow: rgba(22, 163, 74, 0.1);
+            --warning: #d97706;
+            --warning-glow: rgba(217, 119, 6, 0.1);
+            --layout-bg: radial-gradient(circle at 80% 20%, #f8fafc 0%, #cbd5e1 100%);
+            --login-bg: radial-gradient(circle at center, #ffffff 0%, #cbd5e1 100%);
+            --sphere-1-color: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0) 70%);
+            --sphere-2-color: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0) 70%);
+            --sidebar-bg: rgba(255, 255, 255, 0.85);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+        }
+        
+        body.light-theme .user-profile { background: rgba(0, 0, 0, 0.03); }
+        body.light-theme .user-avatar { background: rgba(0, 0, 0, 0.05); }
+        
+        body:not(.light-theme) .leaflet-tile-container {
+            filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'IRANSansX', Tahoma, sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+        .hidden { display: none !important; }
+        
+        /* Flex Utils */
+        .flex { display: flex; } .flex-col { flex-direction: column; }
+        .items-center { align-items: center; } .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; }
+
+        /* Background Spheres for Login Screen */
+        .bg-glow-sphere-1 {
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: var(--sphere-1-color);
+            filter: blur(80px);
+            z-index: 0;
+            animation: float 20s infinite alternate;
+        }
+        .bg-glow-sphere-2 {
+            position: absolute;
+            bottom: 15%;
+            right: 15%;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            background: var(--sphere-2-color);
+            filter: blur(90px);
+            z-index: 0;
+            animation: float 25s infinite alternate-reverse;
+        }
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(60px, 40px) scale(1.15); }
+        }
+
+        /* Login Screen */
+        .login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--login-bg); position: relative; overflow: hidden; }
+        .login-card { background: var(--surface); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 3.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg), 0 0 40px rgba(14, 165, 233, 0.08); width: 100%; max-width: 430px; text-align: center; border: 1px solid var(--border); position: relative; z-index: 10; }
+        .login-logo { display: flex; align-items: center; justify-content: center; margin: 0 auto 1.8rem; }
+        .login-logo img { max-height: 80px; max-width: 100%; object-fit: contain; }
+        .login-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.6rem; color: var(--text-main); letter-spacing: -0.5px; }
+        .login-subtitle { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 2.5rem; }
+        .input-group { position: relative; margin-bottom: 1.8rem; text-align: right; }
+        .input-group i { position: absolute; right: 1.2rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); transition: var(--transition); }
+        .input-control { width: 100%; padding: 1rem 3rem 1rem 1.2rem; border: 1px solid var(--border); border-radius: var(--radius-md); font-family: inherit; font-size: 0.95rem; outline: none; transition: var(--transition); background: rgba(255, 255, 255, 0.03); color: var(--text-main); }
+        .input-control:focus { border-color: var(--primary); background: rgba(255, 255, 255, 0.06); box-shadow: 0 0 15px var(--primary-glow); }
+        .input-control:focus + i { color: var(--primary); }
+        .btn-primary { width: 100%; background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%); color: white; border: none; padding: 1rem; border-radius: var(--radius-md); font-size: 1rem; font-weight: 700; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 0.6rem; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3); }
+        .btn-primary:hover { background: linear-gradient(135deg, #38bdf8 0%, #1d4ed8 100%); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5); }
+        .error-msg { color: var(--danger); font-size: 0.85rem; margin-bottom: 1rem; min-height: 20px; font-weight: 500; }
+
+        /* Dashboard Layout */
+        .app-layout { display: flex; min-height: 100vh; background: var(--layout-bg); }
+        
+        /* Sidebar */
+        .sidebar { width: 280px; background: var(--sidebar-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-left: 1px solid var(--border); padding: 2rem 1.5rem; position: fixed; right: 0; top: 0; height: 100vh; display: flex; flex-direction: column; z-index: 100; box-shadow: var(--shadow-md); overflow-y: auto;}
+        .sidebar-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .sidebar-header .logo { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; }
+        .sidebar-header .logo img { max-height: 100%; max-width: 100%; object-fit: contain; }
+        .sidebar-header h2 { font-size: 1.15rem; font-weight: 800; color: var(--text-main); }
+        .nav-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; flex-grow: 1; }
+        .nav-item { padding: 0.9rem 1rem; border-radius: var(--radius-md); color: var(--text-muted); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 0.8rem; font-weight: 500; text-decoration: none; border: 1px solid transparent; white-space: nowrap; font-size: 0.9rem; }
+        .nav-item:hover, .nav-item.active { background: rgba(14, 165, 233, 0.08); color: var(--text-main); border-color: rgba(14, 165, 233, 0.15); }
+        .nav-item.active { font-weight: 700; background: linear-gradient(135deg, rgba(14, 165, 233, 0.18) 0%, rgba(37, 99, 235, 0.08) 100%); border-color: rgba(14, 165, 233, 0.35); box-shadow: 0 0 15px rgba(14, 165, 233, 0.05); }
+        .logout-btn { margin-top: auto; color: var(--danger); border-top: 1px solid var(--border); padding-top: 1.2rem !important; border-radius: 0; }
+        .logout-btn:hover { background: rgba(244, 63, 94, 0.08); color: #f43f5e; border-color: rgba(244, 63, 94, 0.15); }
+
+        /* Main Content */
+        .main-content { margin-right: 280px; flex-grow: 1; padding: 2.5rem 3.5rem; max-width: 1600px; margin-left: auto; width: calc(100% - 280px); }
+        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
+        .page-title h1 { font-size: 1.9rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.3rem; letter-spacing: -0.5px; }
+        .page-title p { color: var(--text-muted); font-size: 0.95rem; }
+        
+        .user-profile { display: flex; align-items: center; gap: 1rem; background: rgba(255, 255, 255, 0.03); padding: 0.6rem 1.2rem; border-radius: 50px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+        .user-avatar { width: 36px; height: 36px; background: rgba(255, 255, 255, 0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--border); }
+        .user-info { font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .theme-toggle-btn:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 12px var(--primary-glow);
+            transform: scale(1.05);
+        }
+        .floating-login-theme {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            z-index: 100;
+        }
+
+        /* KPI Grid */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .kpi-card { background: var(--surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 1.8rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border); display: flex; align-items: center; gap: 1.5rem; transition: var(--transition); position: relative; overflow: hidden; }
+        .kpi-card:hover { transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.25); box-shadow: var(--shadow-lg), 0 0 20px rgba(56, 189, 248, 0.05); }
+        .kpi-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; transition: var(--transition); }
+        .kpi-icon.blue { background: rgba(14, 165, 233, 0.1); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.2); }
+        .kpi-icon.orange { background: rgba(249, 115, 22, 0.1); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.2); }
+        .kpi-icon.green { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .kpi-icon.purple { background: rgba(139, 92, 246, 0.1); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.2); }
+        .kpi-card:hover .kpi-icon { transform: scale(1.1); }
+        .kpi-details { display: flex; flex-direction: column; }
+        .kpi-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .kpi-value { font-size: 2rem; font-weight: 800; color: var(--text-main); line-height: 1; }
+
+        /* Charts Grid */
+        .charts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+        .chart-card { background: var(--surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 1.8rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border); display: flex; flex-direction: column; transition: var(--transition); }
+        .chart-card:hover { border-color: rgba(255, 255, 255, 0.12); box-shadow: var(--shadow-lg); }
+        .chart-card.col-span-1 { grid-column: span 1; }
+        .chart-card.col-span-2 { grid-column: span 2; }
+        .chart-card.col-span-3 { grid-column: span 3; }
+        .chart-card.full-width { grid-column: span 4; }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1rem; }
+        .chart-title { font-size: 1.05rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.6rem; }
+        .chart-title i { color: var(--primary); }
+        .chart-container { position: relative; height: 280px; width: 100%; flex-grow: 1; }
+        .chart-container.map-container { height: 420px; border-radius: var(--radius-md); overflow: hidden; z-index: 1; border: 1px solid var(--border); }
+        
+        /* Tables & Lists */
+        .table-wrapper { width: 100%; overflow-x: auto; overflow-y: auto; max-height: 400px; border-radius: 0 0 var(--radius-md) var(--radius-md); border: 1px solid var(--border); }
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .data-table th { background: #0b0f1e; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-align: right; padding: 1.1rem; position: sticky; top: 0; z-index: 10; border-bottom: 2px solid var(--border); }
+        body.light-theme .data-table th { background: #f1f5f9; }
+        .data-table th.sortable { cursor: pointer; user-select: none; transition: background 0.15s ease, color 0.15s ease; white-space: nowrap; }
+        .data-table th.sortable:hover { background: rgba(59, 130, 246, 0.08); color: var(--primary); }
+        .data-table th .sort-icon { margin-right: 6px; font-size: 0.75rem; opacity: 0.35; transition: opacity 0.2s, color 0.2s; vertical-align: middle; }
+        .data-table th.sortable:hover .sort-icon { opacity: 0.85; }
+        .data-table th.sort-asc .sort-icon { opacity: 1; color: var(--primary); }
+        .data-table th.sort-desc .sort-icon { opacity: 1; color: var(--primary); }
+        .data-table td { padding: 1.1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; color: var(--text-main); }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:hover td { background: rgba(255, 255, 255, 0.03); }
+        .badge { display: inline-flex; align-items: center; justify-content: center; padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600; gap: 0.4rem; }
+        .badge::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; }
+        .badge-success { background: rgba(16, 185, 129, 0.12); color: #34d399; }
+        .badge-success::before { background: #10b981; box-shadow: 0 0 8px #10b981; }
+        .badge-danger { background: rgba(244, 63, 94, 0.12); color: #fb7185; }
+        .badge-danger::before { background: #f43f5e; box-shadow: 0 0 8px #f43f5e; }
+        .badge-warning { background: rgba(245, 158, 11, 0.12); color: #fbbf24; }
+        .badge-warning::before { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+        .badge-info { background: rgba(14, 165, 233, 0.12); color: #38bdf8; }
+        .badge-info::before { background: #0ea5e9; box-shadow: 0 0 8px #0ea5e9; }
+
+        /* Search Input */
+        .search-box { position: relative; width: 300px; }
+        .search-box input { width: 100%; padding: 0.65rem 2.2rem 0.65rem 1.2rem; border: 1px solid var(--border); border-radius: 50px; font-family: inherit; font-size: 0.9rem; outline: none; transition: var(--transition); background: rgba(255, 255, 255, 0.03); color: var(--text-main); }
+        .search-box input:focus { border-color: var(--primary); background: rgba(255,255,255,0.06); box-shadow: 0 0 15px var(--primary-glow); }
+        .search-box i { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+        /* Universal Table Filter Bar */
+        .table-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 0;
+            padding: 0.75rem 1rem;
+            background: #0d1220;
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+        body.light-theme .table-filter-bar {
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+            border-bottom: none;
+        }
+        .table-filter-bar .filter-title {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+            margin-left: 0.4rem;
+        }
+        .table-filter-bar .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            flex: 1 1 140px;
+            min-width: 120px;
+        }
+        .table-filter-bar .filter-group label {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        .table-filter-bar .filter-input,
+        .table-filter-bar .filter-select {
+            width: 100%;
+            padding: 0.45rem 0.7rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.82rem;
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition);
+        }
+        body.light-theme .table-filter-bar .filter-input,
+        body.light-theme .table-filter-bar .filter-select {
+            background: #ffffff;
+            color: #0f172a;
+            border-color: #cbd5e1;
+        }
+        .table-filter-bar .filter-input:focus,
+        .table-filter-bar .filter-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+        }
+        .table-filter-bar .btn-reset-filter {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.45rem 0.85rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: var(--transition);
+            white-space: nowrap;
+            margin-right: auto;
+        }
+        .table-filter-bar .btn-reset-filter:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+            background: rgba(244, 63, 94, 0.08);
+            transform: translateY(-1px);
+        }
+
+        /* Device Form */
+        .device-form { display: flex; gap: 1.2rem; align-items: flex-end; margin-bottom: 2rem; background: rgba(255, 255, 255, 0.02); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border); }
+        /* Station Combobox */
+        .station-combobox-wrapper { position: relative; flex: 1; min-width: 280px; }
+        .station-combobox-input-wrap { position: relative; display: flex; align-items: center; }
+        .station-combobox-input-wrap input { width: 100%; padding-left: 2.8rem !important; cursor: pointer; }
+        .station-combobox-icon { position: absolute; left: 1rem; color: var(--text-muted); pointer-events: none; font-size: 0.85rem; }
+        .station-combobox-clear { position: absolute; left: 2.3rem; color: var(--text-muted); cursor: pointer; padding: 4px; display: none; font-size: 0.85rem; transition: var(--transition); z-index: 2; }
+        .station-combobox-clear:hover { color: var(--danger); }
+        .station-dropdown-list {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            left: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            max-height: 280px;
+            overflow-y: auto;
+            z-index: 1050;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            direction: rtl;
+        }
+        body.light-theme .station-dropdown-list {
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+        .station-dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+        body.light-theme .station-dropdown-item {
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .station-dropdown-item:last-child { border-bottom: none; }
+        .station-dropdown-item:hover, .station-dropdown-item.active {
+            background: rgba(14, 165, 233, 0.12);
+            color: var(--primary);
+        }
+        .station-dropdown-item.disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            background: rgba(0, 0, 0, 0.04);
+        }
+        .station-dropdown-item.disabled:hover {
+            background: rgba(0, 0, 0, 0.04);
+            color: var(--text-muted);
+        }
+        .station-dropdown-badge {
+            font-size: 0.75rem;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: rgba(244, 63, 94, 0.15);
+            color: #f43f5e;
+            white-space: nowrap;
+        }
+        .station-dropdown-empty {
+            padding: 1.2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; }
+        .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+        .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 0.9rem 1.8rem; border-radius: var(--radius-md); font-family: inherit; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2); }
+        .btn-success:hover { background: linear-gradient(135deg, #34d399 0%, #047857 100%); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
+        .btn-action { background: transparent; border: none; cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: var(--transition); display: inline-flex; align-items: center; justify-content: center; }
+        .btn-action.edit { color: var(--primary); }
+        .btn-action.edit:hover { background: rgba(14, 165, 233, 0.12); }
+        .btn-action.delete { color: var(--danger); }
+        .btn-action.delete:hover { background: rgba(244, 63, 94, 0.12); }
+
+        /* Global Loader */
+        #loaderOverlay { position: fixed; inset: 0; background: rgba(7, 9, 19, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.05); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; margin-bottom: 1.5rem; box-shadow: 0 0 15px rgba(14, 165, 233, 0.15); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 1200px) {
+            .charts-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-card.col-span-1 { grid-column: span 2; }
+            .chart-card.col-span-2 { grid-column: span 2; }
+            .chart-card.col-span-3 { grid-column: span 2; }
+            .chart-card.full-width { grid-column: span 2; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(100%); transition: transform 0.3s; }
+            .main-content { margin-right: 0; padding: 1.5rem; width: 100%; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .chart-card.col-span-1, .chart-card.col-span-2, .chart-card.col-span-3, .chart-card.full-width { grid-column: span 1; }
+            .device-form { flex-direction: column; }
+            .btn-success { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Global Loader -->
+<div id="loaderOverlay" class="hidden">
+    <div class="spinner"></div>
+    <h3 style="color: var(--text-main); font-weight: 700;">در حال دریافت اطلاعات...</h3>
+</div>
+
+<!-- Login Screen -->
+<div id="loginScreen" class="login-wrapper">
+    <button id="loginThemeToggleBtn" class="theme-toggle-btn floating-login-theme" type="button" title="تغییر پوسته (روز/شب)">
+        <i class="fa-solid fa-moon"></i>
+    </button>
+    <div class="login-card">
+        <div class="login-logo">
+            <img src="./assets/images/logo.png" alt="Citibig Logo">
+        </div>
+        <h2 class="login-title">شرکت کنترل ترافیک</h2>
+        <p class="login-subtitle">سامانه حنا</p>
+        
+        <div id="errorMessage" class="error-msg"></div>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="wpUsername" class="input-control" placeholder="نام کاربری" required />
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="wpPassword" class="input-control" placeholder="رمز عبور" required />
+            </div>
+            <button type="submit" class="btn-primary" id="loginBtn">
+                ورود <i class="fa-solid fa-arrow-left"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Dashboard Screen -->
+<div id="dashboardScreen" class="app-layout hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo"><img src="./assets/images/logo.png" alt="Citibig Logo"></div>
+            <h2>شرکت کنترل ترافیک</h2>
+        </div>
+        <ul class="nav-list">
+            <a href="#sec-overview" class="nav-item active"><i class="fa-solid fa-chart-pie"></i> نمای کلی</a>
+            <a href="#sec-stations" class="nav-item"><i class="fa-solid fa-bus"></i> اطلاعات ایستگاه‌ها</a>
+            <a href="#sec-routes" class="nav-item"><i class="fa-solid fa-route"></i> اطلاعات مسیرها</a>
+            <a href="#sec-devices" class="nav-item" id="navDevicesTab"><i class="fa-solid fa-microchip"></i> مدیریت نمایشگرها <span dir="ltr" style="font-size: 0.85em; opacity: 0.8; margin-right: 4px;">(LCD/LED)</span></a>
+            <a href="#sec-health" class="nav-item"><i class="fa-solid fa-heart-pulse"></i> سلامت ایستگاه‌ها</a>
+            <a href="#sec-map" class="nav-item"><i class="fa-solid fa-map-location-dot"></i> نقشه زنده</a>
+            <a href="#sec-eta" class="nav-item"><i class="fa-solid fa-table-list"></i> اطلاعات زنده ETA</a>
+            <a href="#sec-users" class="nav-item hidden" id="navUsersTab"><i class="fa-solid fa-users"></i> مدیریت کاربران</a>
+            <li class="nav-item logout-btn" id="logoutBtn" style="margin-top:20px; border-top:1px solid #e2e8f0; padding-top:1rem;"><i class="fa-solid fa-arrow-right-from-bracket"></i> خروج از سیستم</li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="topbar">
+            <div class="page-title">
+                <h1>سامانه حنا</h1>
+                <p>نمایش وضعیت زنده ناوگان حمل و نقل بر اساس داده‌های سرور مرکزی</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="themeToggleBtn" class="theme-toggle-btn" type="button" title="تغییر پوسته (روز/شب)">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <div class="user-profile">
+                    <div class="user-info" id="welcomeMsg">مدیر عزیز، خوش آمدید</div>
+                    <div class="user-avatar"><i class="fa-solid fa-user-shield"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Grid -->
+        <div class="kpi-grid" id="sec-overview">
+            <div class="kpi-card">
+                <div class="kpi-icon blue"><i class="fa-solid fa-bus"></i></div>
+                <div class="kpi-details">
+                    <span class="kpi-title">کل ایستگاه‌ها</span>
+                    <span class="kpi-value" id="kpiTotalStations">--</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon orange"><i class="fa-solid fa-route"></i></div>
+                <div class="kpi-details">
+                    <span class="kpi-title">کل مسیرها (خطوط)</span>
+                    <span class="kpi-value" id="kpiTotalRoutes">--</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon purple"><i class="fa-solid fa-microchip"></i></div>
+                <div class="kpi-details">
+                    <span class="kpi-title">نمایشگرهای متصل</span>
+                    <span class="kpi-value" id="kpiTotalDevices">--</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon green"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                <div class="kpi-details">
+                    <span class="kpi-title">رکوردهای زنده ETA</span>
+                    <span class="kpi-value" id="kpiTotalEta">--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 1: Four Main Charts from WP -->
+        <div class="charts-grid">
+            <div class="chart-card col-span-1" id="cardColor">
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fa-solid fa-palette"></i> تعداد رنگ‌های ایستگاه‌ها</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartColors"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card col-span-1" id="cardRoute">
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fa-solid fa-route"></i> تعداد ایستگاه در هر مسیر</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartRoutes"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card col-span-1" id="cardBusType">
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fa-solid fa-chart-pie"></i> سهم انواع اتوبوس‌ها</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartBusType"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card col-span-1" id="cardShift">
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fa-solid fa-moon"></i> نوبت کاری ایستگاه‌ها</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartShifts"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2: Map & Additional Data -->
+        <div class="charts-grid" id="sec-map">
+            <div class="chart-card full-width" style="padding: 0; overflow: hidden; border: 1px solid var(--border);">
+                <div class="chart-header" style="padding: 1.5rem 1.5rem 0 1.5rem; border: none;">
+                    <h3 class="chart-title"><i class="fa-solid fa-map-location-dot"></i> نقشه پراکندگی ایستگاه‌ها</h3>
+                </div>
+                <div class="chart-container map-container" id="mapContainer" style="height: 500px; border-radius: 0;"></div>
+            </div>
+        </div>
+
+        <!-- Row 3: Live ETA Table -->
+        <div class="charts-grid" id="sec-eta">
+            <div class="chart-card full-width">
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fa-solid fa-table-list"></i> اطلاعات زنده رسیدن اتوبوس‌ها (Live ETA)</h3>
+                    <div class="search-box">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="etaSearch" placeholder="جستجو در اطلاعات زنده...">
+                    </div>
+                </div>
+                <div class="table-filter-bar" data-target="#etaTable">
+                    <span class="filter-title"><i class="fa-solid fa-filter"></i> فیلتر ستون‌ها:</span>
+                    <div class="filter-group">
+                        <label>ایستگاه:</label>
+                        <input type="text" class="filter-input" data-col="0" placeholder="نام ایستگاه...">
+                    </div>
+                    <div class="filter-group">
+                        <label>کد مسیر:</label>
+                        <input type="text" class="filter-input" data-col="1" placeholder="کد مسیر...">
+                    </div>
+                    <div class="filter-group">
+                        <label>ساعت تخمین:</label>
+                        <input type="text" class="filter-input" data-col="2" placeholder="ساعت...">
+                    </div>
+                    <button type="button" class="btn-reset-filter" title="پاکسازی همه فیلترها"><i class="fa-solid fa-rotate-left"></i> بازنشانی</button>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table" id="etaTable">
+                        <thead>
+                            <tr>
+                                <th>نام ایستگاه</th>
+                                <th>کد مسیر</th>
+                                <th>ساعت رسیدن (تخمین)</th>
+                                <th>زمان باقی‌مانده</th>
+                                <th>آخرین بروزرسانی</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="5" style="text-align: center;">در حال بارگذاری...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 4: Health Status & More Charts -->
+        <div class="charts-grid" id="sec-health">
+            <div class="chart-card col-span-2" id="cardHealthStatus" style="background: #ecfdf5; border-color: #34d399;">
+                <div class="chart-header" style="border: none;">
+                    <h3 class="chart-title" style="color: #065f46;"><i class="fa-solid fa-heart-pulse"></i> وضعیت سلامت ایستگاه‌ها</h3>
+                </div>
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fa-solid fa-server" style="font-size: 3rem; color: #10b981; margin-bottom: 1rem;"></i>
+                    <h2 style="color: #065f46; font-size: 1.5rem; margin-bottom: 0.5rem;">داده‌های سلامت شبکه یافت نشد</h2>
+                    <p style="color: #059669;">نیازمند اتصال به سیستم پایش سخت‌افزار (Ping Status)</p>
+                </div>
+            </div>
+            
+            <div class="chart-card col-span-2" id="cardDelays">
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fa-solid fa-chart-column"></i> ایستگاه‌های دارای بیشترین تاخیر</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartDelays"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card full-width" id="cardDensity">
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fa-solid fa-chart-area"></i> تراکم زمان‌بندی (۲۴ ساعت)</h3>
+                </div>
+                <div class="chart-container" style="height: 200px;">
+                    <canvas id="chartDensity"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row: Stations Management -->
+        <div class="charts-grid" id="sec-stations">
+            <div class="chart-card full-width">
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fa-solid fa-bus"></i> اطلاعات و ویرایش ایستگاه‌ها</h3>
+                </div>
+                
+                <form class="device-form hidden" id="stationForm">
+                    <input type="hidden" id="stationId" value="">
+                    <div class="form-group">
+                        <label>کد ایستگاه</label>
+                        <input type="text" id="stationCodeInput" class="input-control" disabled style="direction: ltr;">
+                    </div>
+                    <div class="form-group">
+                        <label>نام اصلی ایستگاه</label>
+                        <input type="text" id="stationNameInput" class="input-control" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>نام سفارشی ایستگاه</label>
+                        <input type="text" id="stationCustomInput" class="input-control" placeholder="نام سفارشی جدید (اختیاری)">
+                    </div>
+                    <button type="submit" class="btn-success" id="stationSubmitBtn"><i class="fa-solid fa-check"></i> ثبت تغییرات</button>
+                    <button type="button" class="btn-success hidden" id="cancelStationEditBtn" style="background: var(--text-muted);">انصراف</button>
+                </form>
+
+                <div class="table-filter-bar" data-target="#stationsTable">
+                    <span class="filter-title"><i class="fa-solid fa-filter"></i> فیلتر ستون‌ها:</span>
+                    <div class="filter-group">
+                        <label>کد ایستگاه:</label>
+                        <input type="text" class="filter-input" data-col="0" placeholder="کد...">
+                    </div>
+                    <div class="filter-group">
+                        <label>نام اصلی:</label>
+                        <input type="text" class="filter-input" data-col="1" placeholder="نام اصلی...">
+                    </div>
+                    <div class="filter-group">
+                        <label>نام سفارشی:</label>
+                        <input type="text" class="filter-input" data-col="2" placeholder="نام سفارشی...">
+                    </div>
+                    <button type="button" class="btn-reset-filter" title="پاکسازی همه فیلترها"><i class="fa-solid fa-rotate-left"></i> بازنشانی</button>
+                </div>
+
+                <div class="table-wrapper" style="max-height: 400px; border-radius: 0 0 var(--radius-md) var(--radius-md);">
+                    <table class="data-table" id="stationsTable">
+                        <thead>
+                            <tr>
+                                <th>کد ایستگاه</th>
+                                <th>نام اصلی</th>
+                                <th>نام سفارشی</th>
+                                <th style="text-align: center;">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="4" style="text-align: center;">در حال بارگذاری...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row: Routes Management -->
+        <div class="charts-grid" id="sec-routes">
+            <div class="chart-card full-width">
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fa-solid fa-route"></i> اطلاعات و ویرایش مسیرها</h3>
+                </div>
+                
+                <form class="device-form hidden" id="routeForm">
+                    <input type="hidden" id="routeId" value="">
+                    <div class="form-group">
+                        <label>کد مسیر</label>
+                        <input type="text" id="routeCodeInput" class="input-control" disabled style="direction: ltr;">
+                    </div>
+                    <div class="form-group">
+                        <label>مبدا سفارشی</label>
+                        <input type="text" id="routeTerminal1Custom" class="input-control" placeholder="مبدا جدید (اختیاری)">
+                    </div>
+                    <div class="form-group">
+                        <label>مقصد سفارشی</label>
+                        <input type="text" id="routeTerminal2Custom" class="input-control" placeholder="مقصد جدید (اختیاری)">
+                    </div>
+                    <button type="submit" class="btn-success" id="routeSubmitBtn"><i class="fa-solid fa-check"></i> ثبت تغییرات</button>
+                    <button type="button" class="btn-success hidden" id="cancelRouteEditBtn" style="background: var(--text-muted);">انصراف</button>
+                </form>
+
+                <div class="table-filter-bar" data-target="#routesTable">
+                    <span class="filter-title"><i class="fa-solid fa-filter"></i> فیلتر ستون‌ها:</span>
+                    <div class="filter-group">
+                        <label>کد مسیر:</label>
+                        <input type="text" class="filter-input" data-col="0" placeholder="کد...">
+                    </div>
+                    <div class="filter-group">
+                        <label>مبدا (اصلی/سفارشی):</label>
+                        <input type="text" class="filter-input" data-cols="1,2" placeholder="نام مبدا...">
+                    </div>
+                    <div class="filter-group">
+                        <label>مقصد (اصلی/سفارشی):</label>
+                        <input type="text" class="filter-input" data-cols="3,4" placeholder="نام مقصد...">
+                    </div>
+                    <button type="button" class="btn-reset-filter" title="پاکسازی همه فیلترها"><i class="fa-solid fa-rotate-left"></i> بازنشانی</button>
+                </div>
+
+                <div class="table-wrapper" style="max-height: 400px; border-radius: 0 0 var(--radius-md) var(--radius-md);">
+                    <table class="data-table" id="routesTable">
+                        <thead>
+                            <tr>
+                                <th>کد مسیر</th>
+                                <th>مبدا اصلی</th>
+                                <th>مبدا سفارشی</th>
+                                <th>مقصد اصلی</th>
+                                <th>مقصد سفارشی</th>
+                                <th style="text-align: center;">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="6" style="text-align: center;">در حال بارگذاری...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 5: Display Mapping -->
+        <div class="charts-grid" id="sec-devices">
+            <div class="chart-card full-width">
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fa-solid fa-microchip"></i> مدیریت نمایشگرها در ایستگاه‌ها ( LCD/LED Mapping )</h3>
+                </div>
+                
+                <form class="device-form" id="deviceForm">
+                    <input type="hidden" id="deviceId" value="">
+                    <div class="form-group">
+                        <label>کد IMEI نمایشگر (الزاماً ۱۵ رقم)</label>
+                        <input type="text" id="deviceImei" class="input-control" placeholder="مثال: 356938038123456" maxlength="15" inputmode="numeric" required style="direction: ltr;">
+                    </div>
+                    <div class="form-group">
+                        <label>آدرس IP نمایشگر (IPv4 یا IPv6)</label>
+                        <input type="text" id="deviceIp" class="input-control" placeholder="مثال: 192.168.1.50 یا 2001:db8::1" style="direction: ltr;">
+                    </div>
+                    <div class="form-group station-combobox-wrapper">
+                        <label>ایستگاه (جستجو و انتخاب از جدول Station)</label>
+                        <div class="station-combobox-input-wrap">
+                            <input type="text" id="stationSearchInput" class="input-control" placeholder="جستجوی کد یا نام ایستگاه..." autocomplete="off">
+                            <i class="fa-solid fa-xmark station-combobox-clear" id="stationClearBtn" title="پاکسازی"></i>
+                            <i class="fa-solid fa-magnifying-glass station-combobox-icon"></i>
+                            <input type="hidden" id="deviceStation" value="">
+                        </div>
+                        <div id="stationDropdownList" class="station-dropdown-list hidden"></div>
+                    </div>
+                    <button type="submit" class="btn-success"><i class="fa-solid fa-plus"></i> ثبت نمایشگر</button>
+                    <button type="button" class="btn-success hidden" id="cancelEditBtn" style="background: var(--text-muted);">انصراف</button>
+                </form>
+
+                <div class="table-filter-bar" data-target="#devicesTable">
+                    <span class="filter-title"><i class="fa-solid fa-filter"></i> فیلتر ستون‌ها:</span>
+                    <div class="filter-group">
+                        <label>کد IMEI:</label>
+                        <input type="text" class="filter-input" data-col="0" placeholder="IMEI..." style="direction: ltr;">
+                    </div>
+                    <div class="filter-group">
+                        <label>آدرس IP:</label>
+                        <input type="text" class="filter-input" data-col="1" placeholder="IP..." style="direction: ltr;">
+                    </div>
+                    <div class="filter-group">
+                        <label>نام ایستگاه:</label>
+                        <input type="text" class="filter-input" data-col="2" placeholder="نام ایستگاه...">
+                    </div>
+                    <div class="filter-group">
+                        <label>کد ایستگاه:</label>
+                        <input type="text" class="filter-input" data-col="3" placeholder="کد...">
+                    </div>
+                    <button type="button" class="btn-reset-filter" title="پاکسازی همه فیلترها"><i class="fa-solid fa-rotate-left"></i> بازنشانی</button>
+                </div>
+
+                <div class="table-wrapper" style="max-height: 300px; border-radius: 0 0 var(--radius-md) var(--radius-md);">
+                    <table class="data-table" id="devicesTable">
+                        <thead>
+                            <tr>
+                                <th>کد IMEI</th>
+                                <th>آدرس IP</th>
+                                <th>نام ایستگاه</th>
+                                <th>کد ایستگاه</th>
+                                <th style="text-align: center;">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="5" style="text-align: center;">در حال بارگذاری...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="chartDevices"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 6: User Management -->
+        <div class="charts-grid hidden" id="sec-users">
+            <div class="chart-card full-width">
+                <div class="chart-header">
+                    <h3 class="chart-title" id="usersSectionTitle"><i class="fa-solid fa-users"></i> مدیریت کاربران (سوپروایزر و اپراتور)</h3>
+                </div>
+                
+                <form class="device-form" id="userForm">
+                    <input type="hidden" id="userId" value="">
+                    <div class="form-group">
+                        <label>نام کاربری</label>
+                        <input type="text" id="userUsername" class="input-control" placeholder="نام کاربری جدید" required style="direction: ltr;">
+                    </div>
+                    <div class="form-group">
+                        <label>کلمه عبور</label>
+                        <input type="password" id="userPassword" class="input-control" placeholder="کلمه عبور" required style="direction: ltr;">
+                    </div>
+                    <div class="form-group" id="userRoleGroup">
+                        <label>نقش کاربری</label>
+                        <select id="userRole" class="input-control">
+                            <option value="operator">اپراتور</option>
+                            <option value="supervisor">سوپروایزر</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-success" id="userSubmitBtn"><i class="fa-solid fa-user-plus"></i> ثبت کاربر</button>
+                    <button type="button" class="btn-success hidden" id="cancelUserEditBtn" style="background: var(--text-muted);">انصراف</button>
+                </form>
+
+                <div class="table-filter-bar" data-target="#usersTable">
+                    <span class="filter-title"><i class="fa-solid fa-filter"></i> فیلتر ستون‌ها:</span>
+                    <div class="filter-group">
+                        <label>نام کاربری:</label>
+                        <input type="text" class="filter-input" data-col="0" placeholder="نام کاربری...">
+                    </div>
+                    <div class="filter-group">
+                        <label>نقش کاربری:</label>
+                        <select class="filter-select" data-col="1">
+                            <option value="">همه نقش‌ها</option>
+                            <option value="مدیر">مدیر (ادمین)</option>
+                            <option value="سوپروایزر">سوپروایزر</option>
+                            <option value="اپراتور">اپراتور</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn-reset-filter" title="پاکسازی همه فیلترها"><i class="fa-solid fa-rotate-left"></i> بازنشانی</button>
+                </div>
+
+                <div class="table-wrapper" style="max-height: 300px; border-radius: 0 0 var(--radius-md) var(--radius-md);">
+                    <table class="data-table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>نام کاربری</th>
+                                <th>نقش کاربری</th>
+                                <th>تاریخ ثبت‌نام</th>
+                                <th style="text-align: center;">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="4" style="text-align: center;">در حال بارگذاری...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+    const BRIDGE_URL = './citibig-bridge.php';
+    const API_PATH = '/wp-json/citibig/v1';
+
+    // Theme Switcher Logic
+    const savedTheme = localStorage.getItem('citibig_theme') || 'dark';
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+    } else {
+        document.body.classList.remove('light-theme');
+    }
+
+    function initThemeIcons() {
+        const isLight = document.body.classList.contains('light-theme');
+        const iconClass = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        const titleText = isLight ? 'پوسته شب' : 'پوسته روز';
+        
+        const toggleBtn = document.getElementById('themeToggleBtn');
+        const loginToggleBtn = document.getElementById('loginThemeToggleBtn');
+        
+        if (toggleBtn) {
+            toggleBtn.innerHTML = `<i class="${iconClass}"></i>`;
+            toggleBtn.title = titleText;
+        }
+        if (loginToggleBtn) {
+            loginToggleBtn.innerHTML = `<i class="${iconClass}"></i>`;
+            loginToggleBtn.title = titleText;
+        }
+    }
+
+    function toggleTheme() {
+        const isLight = document.body.classList.toggle('light-theme');
+        localStorage.setItem('citibig_theme', isLight ? 'light' : 'dark');
+        initThemeIcons();
+        updateChartDefaults(isLight);
+    }
+
+    function updateChartDefaults(isLight) {
+        const fontColor = isLight ? '#475569' : '#94a3b8';
+        const gridColor = isLight ? 'rgba(15, 23, 42, 0.05)' : 'rgba(255, 255, 255, 0.05)';
+        
+        Chart.defaults.color = fontColor;
+        
+        Object.keys(chartInstances).forEach(id => {
+            const chart = chartInstances[id];
+            if (chart) {
+                if (chart.options.plugins && chart.options.plugins.legend) {
+                    chart.options.plugins.legend.labels.color = fontColor;
+                }
+                if (chart.options.scales) {
+                    Object.keys(chart.options.scales).forEach(scaleId => {
+                        const scale = chart.options.scales[scaleId];
+                        if (scale.ticks) scale.ticks.color = fontColor;
+                        if (scale.grid) scale.grid.color = gridColor;
+                    });
+                }
+                chart.update();
+            }
+        });
+    }
+
+    // UI Elements
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboardScreen = document.getElementById('dashboardScreen');
+    const loginForm = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('wpUsername');
+    const passwordInput = document.getElementById('wpPassword');
+    const errorMsg = document.getElementById('errorMessage');
+    const welcomeMsg = document.getElementById('welcomeMsg');
+    const loaderOverlay = document.getElementById('loaderOverlay');
+    const loginBtn = document.getElementById('loginBtn');
+
+    // Chart instances (for destruction)
+    let chartInstances = {};
+    let leafletMap = null;
+
+    // Initialize Theme elements
+    initThemeIcons();
+    const tBtn = document.getElementById('themeToggleBtn');
+    if (tBtn) tBtn.addEventListener('click', toggleTheme);
+    const ltBtn = document.getElementById('loginThemeToggleBtn');
+    if (ltBtn) ltBtn.addEventListener('click', toggleTheme);
+
+    const isLightThemeNow = document.body.classList.contains('light-theme');
+    Chart.defaults.font.family = "'IRANSansX', 'Vazirmatn', Tahoma, sans-serif";
+    Chart.defaults.color = isLightThemeNow ? '#475569' : '#94a3b8';
+
+    const savedToken = localStorage.getItem('citibig_token');
+    const savedRole = localStorage.getItem('citibig_role');
+    if (savedToken) {
+        showDashboard();
+        applyRolePermissions(savedRole);
+        fetchChartsData(savedToken, true);
+        if (savedRole === 'admin' || savedRole === 'supervisor') {
+            fetchDevicesData(savedToken);
+            fetchUsersData(savedToken);
+        }
+        fetchStationsData(savedToken);
+        fetchRoutesData(savedToken);
+    }
+
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+        if (!username || !password) return;
+        loginWithCredentials(username, password);
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        localStorage.removeItem('citibig_token');
+        localStorage.removeItem('citibig_role');
+        showLogin();
+    });
+
+    // Smooth scroll for sidebar
+    document.querySelectorAll('.sidebar .nav-item[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // Live ETA Search
+    document.getElementById('etaSearch').addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('#etaTable tbody tr');
+        rows.forEach(row => {
+            if(row.innerText.toLowerCase().includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    function showLogin() {
+        dashboardScreen.classList.add('hidden');
+        loginScreen.classList.remove('hidden');
+        usernameInput.value = '';
+        passwordInput.value = '';
+    }
+
+    function showDashboard() {
+        loginScreen.classList.add('hidden');
+        dashboardScreen.classList.remove('hidden');
+    }
+
+    function showLoader() { loaderOverlay.classList.remove('hidden'); }
+    function hideLoader() { loaderOverlay.classList.add('hidden'); }
+
+    function getApiUrl(endpoint) {
+        return BRIDGE_URL + '?path=' + encodeURIComponent(API_PATH + endpoint);
+    }
+
+    function loginWithCredentials(username, password) {
+        errorMsg.innerText = '';
+        loginBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> در حال بررسی...';
+        loginBtn.disabled = true;
+        
+        fetch(getApiUrl('/auth'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        })
+        .then(async res => {
+            const isJson = res.headers.get('content-type')?.includes('application/json');
+            const data = isJson ? await res.json() : await res.text();
+            if (!res.ok) throw new Error(isJson ? (data.message || data.error) : 'سرور خطای غیرمنتظره‌ای برگرداند.');
+            return data;
+        })
+        .then(data => {
+            if (data.success && data.token) {
+                localStorage.setItem('citibig_token', data.token);
+                localStorage.setItem('citibig_role', data.role);
+                welcomeMsg.innerText = data.message;
+                showDashboard();
+                applyRolePermissions(data.role);
+                fetchChartsData(data.token, false);
+                if (data.role === 'admin' || data.role === 'supervisor') {
+                    fetchDevicesData(data.token);
+                    fetchUsersData(data.token);
+                }
+                fetchStationsData(data.token);
+                fetchRoutesData(data.token);
+            } else {
+                throw new Error(data.message || 'خطای نامشخص در لاگین.');
+            }
+        })
+        .catch(err => {
+            errorMsg.innerText = err.message;
+            console.error(err);
+        })
+        .finally(() => {
+            loginBtn.innerHTML = 'ورود <i class="fa-solid fa-arrow-left"></i>';
+            loginBtn.disabled = false;
+        });
+    }
+
+    function fetchChartsData(token, isAutoLogin) {
+        showLoader();
+        fetch(getApiUrl('/charts'), {
+            method: 'GET',
+            headers: { 'X-Citibig-Token': token }
+        })
+        .then(async res => {
+            if (!res.ok) {
+                if (res.status === 401 && isAutoLogin) throw new Error('TOKEN_EXPIRED');
+                const isJson = res.headers.get('content-type')?.includes('application/json');
+                const data = isJson ? await res.json() : await res.text();
+                throw new Error(isJson ? data.message : 'خطا در دریافت اطلاعات. لطفا از صحت تنظیمات Bridge مطمئن شوید.');
+            }
+            return res.json();
+        })
+        .then(data => {
+            renderDashboard(data);
+        })
+        .catch(err => {
+            if (err.message === 'TOKEN_EXPIRED') {
+                localStorage.removeItem('citibig_token');
+                localStorage.removeItem('citibig_role');
+                showLogin();
+                errorMsg.innerText = 'نشست شما منقضی شده است. مجدداً وارد شوید.';
+            } else {
+                alert('خطا: ' + err.message);
+                if (!isAutoLogin) showLogin();
+            }
+            console.error(err);
+        })
+        .finally(() => {
+            hideLoader();
+        });
+    }
+
+    function fetchDevicesData(token) {
+        const currentRole = localStorage.getItem('citibig_role');
+        if (currentRole === 'operator') return;
+        fetch(getApiUrl('/devices'), {
+            method: 'GET',
+            headers: { 'X-Citibig-Token': token }
+        })
+        .then(res => res.json())
+        .then(data => {
+            renderDevicesTable(data);
+        })
+        .catch(err => console.error("Error loading devices", err));
+    }
+
+    function renderDashboard(data) {
+        // Apply admin backend toggles (show/hide sections)
+        applyDisplayToggles(data.toggles);
+
+        // Re-apply role permissions after toggles to ensure role-based UI is always correct
+        const currentRole = localStorage.getItem('citibig_role');
+        if (currentRole) {
+            applyRolePermissions(currentRole);
+        }
+
+
+        // Render KPIs
+        if (data.kpi) {
+            animateValue("kpiTotalStations", data.kpi.stations || 0);
+            animateValue("kpiTotalRoutes", data.kpi.routes || 0);
+            animateValue("kpiTotalEta", data.kpi.etas || 0);
+        }
+        
+        let devCount = 0;
+        if(data.device_mapping) {
+            data.device_mapping.forEach(d => devCount += parseInt(d.device_count));
+        }
+        animateValue("kpiTotalDevices", devCount);
+
+        // Translations
+        const busTypeTrans = { 'Private': 'بخش خصوصی', 'Public': 'بخش عمومی', 'Auxiliary': 'کمکی', 'BRT': 'تندرو (BRT)' };
+        const shiftTrans = { 'Day': 'روزانه', 'Night': 'شبانه' };
+        const customColors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#14b8a6', '#64748b'];
+
+        // 1. Color Chart (Doughnut)
+        if (data.colors && data.colors.length > 0) {
+            const labels = [], counts = [];
+            data.colors.forEach(i => { labels.push(i.Color_Type); counts.push(i.count); });
+            createChart('chartColors', 'doughnut', labels, [{ data: counts, backgroundColor: customColors, borderWidth: 0 }], { cutout: '65%' });
+        }
+
+        // 2. Routes (Bar)
+        if (data.routes && data.routes.length > 0) {
+            const labels = [], counts = [];
+            data.routes.forEach(i => { labels.push(i.Route_Name || 'بدون نام'); counts.push(i.station_count); });
+            createChart('chartRoutes', 'bar', labels, [{ label: 'ایستگاه', data: counts, backgroundColor: '#3b82f6', borderRadius: 4 }]);
+        }
+
+        // 3. Bus Type (Pie)
+        if (data.bustypes && data.bustypes.length > 0) {
+            const labels = [], counts = [];
+            data.bustypes.forEach(i => { labels.push(busTypeTrans[i.Bus_Type] || i.Bus_Type); counts.push(i.count); });
+            createChart('chartBusType', 'pie', labels, [{ data: counts, backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ec4899'], borderWidth: 0 }]);
+        }
+
+        // 4. Shifts (Horizontal Bar)
+        if (data.shifts && data.shifts.length > 0) {
+            const labels = [], counts = [];
+            data.shifts.forEach(i => { labels.push(shiftTrans[i.shift_type] || i.shift_type); counts.push(i.count); });
+            createChart('chartShifts', 'bar', labels, [{ label: 'ایستگاه', data: counts, backgroundColor: '#64748b', borderRadius: 4 }], { indexAxis: 'y' });
+        }
+
+        // 5. Map
+        if (data.stations && data.stations.length > 0) {
+            if (leafletMap) leafletMap.remove();
+            leafletMap = L.map('mapContainer').setView([35.6892, 51.3890], 11);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(leafletMap);
+            data.stations.forEach(st => {
+                if(st.Latitude && st.Longitude && st.Latitude != 0) {
+                    L.marker([st.Latitude, st.Longitude]).addTo(leafletMap)
+                     .bindPopup(`<div style="direction:rtl; font-family:Vazirmatn;"><b>${st.Station_Name}</b><br>نوع: ${busTypeTrans[st.Bus_Type] || st.Bus_Type}</div>`);
+                }
+            });
+        }
+
+        // 6. Live ETA Table
+        const tbody = document.querySelector('#etaTable tbody');
+        tbody.innerHTML = '';
+        if (data.etas && data.etas.length > 0) {
+            data.etas.forEach(eta => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>${eta.Station_Name}</b></td>
+                    <td><span class="badge badge-info">${eta.code}</span></td>
+                    <td style="direction:ltr; text-align:right;">${eta.eta}</td>
+                    <td><span class="badge ${eta.eta_minutes > 15 ? 'badge-danger' : 'badge-success'}">${eta.eta_minutes} دقیقه</span></td>
+                    <td style="direction:ltr; text-align:right;">${eta.updated_at}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">هیچ رکورد زنده‌ای یافت نشد.</td></tr>';
+        }
+        reapplyTableSort('#etaTable');
+        applyTableFilter('#etaTable');
+
+        // 7. Top Delays (Bar)
+        if (data.delays && data.delays.length > 0) {
+            const labels = [], delays = [];
+            data.delays.forEach(i => { labels.push(i.Station_Name); delays.push(i.avg_delay); });
+            createChart('chartDelays', 'bar', labels, [{ label: 'تاخیر (دقیقه)', data: delays, backgroundColor: '#ef4444', borderRadius: 4 }], { indexAxis: 'y' });
+        }
+
+        // 8. Density Chart (Line)
+        if (data.density && data.density.length > 0) {
+            const labels = [], counts = [];
+            let map = {}; for(let i=0; i<24; i++) map[i]=0;
+            data.density.forEach(i => map[i.hour] = i.count);
+            for(let h=0; h<24; h++) { labels.push(String(h).padStart(2,'0')+':00'); counts.push(map[h]); }
+            createChart('chartDensity', 'line', labels, [{
+                label: 'تعداد اعزام', data: counts, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', fill: true, tension: 0.4
+            }]);
+        }
+
+        // 9. Devices Bar Chart
+        if (data.device_mapping && data.device_mapping.length > 0) {
+            const labels = [], counts = [];
+            data.device_mapping.forEach(i => { labels.push(i.Station_Name); counts.push(i.device_count); });
+            createChart('chartDevices', 'bar', labels, [{
+                label: 'تعداد نمایشگر', data: counts, backgroundColor: '#8b5cf6', borderRadius: 4
+            }], { indexAxis: 'y' });
+        }
+    }
+
+    function createChart(canvasId, type, labels, datasets, extraOptions = {}) {
+        if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        
+        const isLight = document.body.classList.contains('light-theme');
+        const fontColor = isLight ? '#475569' : '#94a3b8';
+        const gridColor = isLight ? 'rgba(15, 23, 42, 0.05)' : 'rgba(255, 255, 255, 0.05)';
+
+        const defaultOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { 
+                legend: { 
+                    position: 'bottom', 
+                    labels: { 
+                        usePointStyle: true, 
+                        boxWidth: 8, 
+                        font: { family: "'IRANSansX', 'Vazirmatn', Tahoma", size: 11 },
+                        color: fontColor
+                    } 
+                } 
+            },
+            layout: { padding: 10 }
+        };
+        if (type === 'line' || type === 'bar') {
+            defaultOptions.scales = {
+                x: { 
+                    grid: { display: false }, 
+                    border: { display: false },
+                    ticks: { color: fontColor, font: { family: "'IRANSansX', Tahoma" } }
+                },
+                y: { 
+                    border: { display: false }, 
+                    grid: { color: gridColor }, 
+                    beginAtZero: true,
+                    ticks: { color: fontColor, font: { family: "'IRANSansX', Tahoma" } }
+                }
+            };
+        }
+        if (extraOptions.indexAxis === 'y') {
+            defaultOptions.scales = {
+                y: { 
+                    grid: { display: false }, 
+                    border: { display: false },
+                    ticks: { color: fontColor, font: { family: "'IRANSansX', Tahoma" } }
+                },
+                x: { 
+                    border: { display: false }, 
+                    grid: { color: gridColor }, 
+                    beginAtZero: true,
+                    ticks: { color: fontColor, font: { family: "'IRANSansX', Tahoma" } }
+                }
+            };
+        }
+        
+        chartInstances[canvasId] = new Chart(ctx, {
+            type: type,
+            data: { labels: labels, datasets: datasets },
+            options: Object.assign({}, defaultOptions, extraOptions)
+        });
+    }
+
+    function animateValue(id, end, duration = 1000) {
+        const obj = document.getElementById(id);
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerHTML = Math.floor(progress * end).toLocaleString('fa-IR');
+            if (progress < 1) window.requestAnimationFrame(step);
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    // Devices Table and Form Logic
+    window.allDevicesList = [];
+    window.allStationsList = [];
+
+    function renderDevicesTable(data) {
+        window.allDevicesList = data || [];
+        const tbody = document.querySelector('#devicesTable tbody');
+        tbody.innerHTML = '';
+        const role = localStorage.getItem('citibig_role');
+        const isAdmin = (role === 'admin');
+
+        const headerActions = document.querySelector('#devicesTable thead th:last-child');
+        if (headerActions) {
+            headerActions.style.display = isAdmin ? '' : 'none';
+        }
+
+        if (data && data.length > 0) {
+            data.forEach(dev => {
+                const tr = document.createElement('tr');
+                let actionHtml = '';
+                if (isAdmin) {
+                    actionHtml = `
+                        <td style="text-align: center;">
+                            <button class="btn-action edit" onclick="editDevice(${dev.id}, '${dev.imei}', '${dev.station_code}', '${dev.ip || ''}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-action delete" onclick="deleteDevice(${dev.id})"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                }
+                tr.innerHTML = `
+                    <td style="direction:ltr; text-align:right;"><b>${dev.imei}</b></td>
+                    <td style="direction:ltr; text-align:right; font-family:monospace;">${dev.ip || '-'}</td>
+                    <td>${dev.Station_Name || '-'}</td>
+                    <td><span class="badge badge-info">${dev.station_code}</span></td>
+                    ${actionHtml}
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = `<tr><td colspan="${isAdmin ? 5 : 4}" style="text-align: center;">هیچ نمایشگری ثبت نشده است.</td></tr>`;
+        }
+        reapplyTableSort('#devicesTable');
+        applyTableFilter('#devicesTable');
+        populateDeviceStationsDropdown();
+    }
+
+    const deviceForm = document.getElementById('deviceForm');
+    const deviceIdInput = document.getElementById('deviceId');
+    const deviceImeiInput = document.getElementById('deviceImei');
+    const deviceIpInput = document.getElementById('deviceIp');
+    const deviceStationInput = document.getElementById('deviceStation');
+    const stationSearchInput = document.getElementById('stationSearchInput');
+    const stationDropdownList = document.getElementById('stationDropdownList');
+    const stationClearBtn = document.getElementById('stationClearBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+    function populateDeviceStationsDropdown(selectedStationCode = null, currentEditingDeviceId = null) {
+        if (!stationSearchInput) return;
+        const stations = window.allStationsList || [];
+        const codeToFind = selectedStationCode !== null && selectedStationCode !== undefined ? String(selectedStationCode) : deviceStationInput.value;
+        if (codeToFind) {
+            const found = stations.find(s => String(s.code) === codeToFind);
+            if (found) {
+                const customPart = found.station_custom ? ` (${found.station_custom})` : '';
+                stationSearchInput.value = `کد ${found.code} - ${found.Station_Name}${customPart}`;
+                deviceStationInput.value = found.code;
+                if (stationClearBtn) stationClearBtn.style.display = 'block';
+            }
+        }
+    }
+
+    function renderStationDropdownItems(filterText = '', currentEditingDeviceId = null) {
+        if (!stationDropdownList) return;
+        const stations = window.allStationsList || [];
+        const devices = window.allDevicesList || [];
+
+        // Build assigned station map
+        const assignedStationMap = {};
+        devices.forEach(dev => {
+            const devId = parseInt(dev.id);
+            const editingId = currentEditingDeviceId ? parseInt(currentEditingDeviceId) : (deviceIdInput && deviceIdInput.value ? parseInt(deviceIdInput.value) : null);
+            if (editingId && devId === editingId) {
+                return;
+            }
+            if (dev.station_code) {
+                assignedStationMap[String(dev.station_code)] = dev.imei;
+            }
+        });
+
+        const normFilter = toEnglishDigits((filterText || '').trim().toLowerCase());
+        
+        // Filter stations
+        const filtered = stations.filter(st => {
+            if (!normFilter) return true;
+            const codeStr = toEnglishDigits(String(st.code).toLowerCase());
+            const nameStr = (st.Station_Name || '').toLowerCase();
+            const customStr = (st.station_custom || '').toLowerCase();
+            return codeStr.includes(normFilter) || nameStr.includes(normFilter) || customStr.includes(normFilter);
+        });
+
+        // Sort stations numerically
+        filtered.sort((a, b) => parseInt(a.code) - parseInt(b.code));
+
+        stationDropdownList.innerHTML = '';
+
+        if (filtered.length === 0) {
+            stationDropdownList.innerHTML = '<div class="station-dropdown-empty"><i class="fa-solid fa-circle-exclamation" style="margin-left: 6px;"></i> هیچ ایستگاهی با این مشخصات یافت نشد.</div>';
+            return;
+        }
+
+        filtered.slice(0, 80).forEach(st => {
+            const item = document.createElement('div');
+            const codeStr = String(st.code);
+            const isAssigned = Boolean(assignedStationMap[codeStr]);
+            const customPart = st.station_custom ? ` (${st.station_custom})` : '';
+            const isSelected = String(deviceStationInput.value) === codeStr;
+
+            item.className = 'station-dropdown-item' + (isAssigned ? ' disabled' : '') + (isSelected ? ' active' : '');
+            
+            let badgeHtml = '';
+            if (isAssigned) {
+                badgeHtml = '<span class="station-dropdown-badge"><i class="fa-solid fa-lock" style="margin-left: 3px;"></i> اختصاص‌یافته</span>';
+            } else if (isSelected) {
+                badgeHtml = '<span style="color: var(--primary); font-size: 0.8rem;"><i class="fa-solid fa-check"></i> انتخاب‌شده</span>';
+            }
+
+            item.innerHTML = `<span><b>کد ${st.code}</b> - ${st.Station_Name}${customPart}</span>${badgeHtml}`;
+
+            if (!isAssigned) {
+                item.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    selectStation(st);
+                });
+            }
+            stationDropdownList.appendChild(item);
+        });
+
+        if (filtered.length > 80) {
+            const moreInfo = document.createElement('div');
+            moreInfo.className = 'station-dropdown-empty';
+            moreInfo.style.borderTop = '1px dashed var(--border)';
+            moreInfo.textContent = `... و ${filtered.length - 80} ایستگاه دیگر (برای نتایج دقیق‌تر جستجو کنید)`;
+            stationDropdownList.appendChild(moreInfo);
+        }
+    }
+
+    function selectStation(st) {
+        const customPart = st.station_custom ? ` (${st.station_custom})` : '';
+        stationSearchInput.value = `کد ${st.code} - ${st.Station_Name}${customPart}`;
+        deviceStationInput.value = st.code;
+        stationDropdownList.classList.add('hidden');
+        if (stationClearBtn) stationClearBtn.style.display = 'block';
+    }
+
+    if (stationSearchInput) {
+        stationSearchInput.addEventListener('focus', () => {
+            renderStationDropdownItems(stationSearchInput.value);
+            stationDropdownList.classList.remove('hidden');
+        });
+
+        stationSearchInput.addEventListener('input', () => {
+            deviceStationInput.value = '';
+            if (stationClearBtn) {
+                stationClearBtn.style.display = stationSearchInput.value ? 'block' : 'none';
+            }
+            renderStationDropdownItems(stationSearchInput.value);
+            stationDropdownList.classList.remove('hidden');
+        });
+
+        stationSearchInput.addEventListener('blur', () => {
+            setTimeout(() => {
+                if (stationDropdownList) stationDropdownList.classList.add('hidden');
+                if (!deviceStationInput.value && stationSearchInput.value.trim()) {
+                    const norm = toEnglishDigits(stationSearchInput.value.trim());
+                    const match = (window.allStationsList || []).find(s => String(s.code) === norm);
+                    if (match) {
+                        selectStation(match);
+                    }
+                }
+            }, 250);
+        });
+    }
+
+    if (stationClearBtn) {
+        stationClearBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            stationSearchInput.value = '';
+            deviceStationInput.value = '';
+            stationClearBtn.style.display = 'none';
+            stationSearchInput.focus();
+            renderStationDropdownItems('');
+            stationDropdownList.classList.remove('hidden');
+        });
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.station-combobox-wrapper')) {
+            if (stationDropdownList) stationDropdownList.classList.add('hidden');
+        }
+    });
+
+    function isValidIpAddress(ip) {
+        if (!ip) return true;
+        const norm = toEnglishDigits(ip.trim());
+        const ipv4Regex = /^((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})$/;
+        const ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))$/;
+        return ipv4Regex.test(norm) || ipv6Regex.test(norm);
+    }
+
+    if (deviceImeiInput) {
+        deviceImeiInput.addEventListener('input', function() {
+            this.value = toEnglishDigits(this.value).replace(/\D/g, '').slice(0, 15);
+        });
+    }
+
+    deviceForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const id = deviceIdInput.value;
+        const imei = toEnglishDigits(deviceImeiInput.value.trim()).replace(/\D/g, '');
+        const ip = deviceIpInput ? toEnglishDigits(deviceIpInput.value.trim()) : '';
+        const station = deviceStationInput.value.trim();
+        const token = localStorage.getItem('citibig_token');
+        
+        // 1. Strict IMEI Validation: Exactly 15 digits
+        if (!imei || !/^\d{15}$/.test(imei)) {
+            alert('خطا: کد IMEI باید الزاماً یک عدد ۱۵ رقمی معتبر باشد.');
+            deviceImeiInput.focus();
+            return;
+        }
+
+        // 2. Strict Station Validation: Must exist in Station table
+        if (!station) {
+            alert('خطا: لطفاً ایستگاه را از لیست پیشنهادی جستجو انتخاب فرمایید.');
+            if (stationSearchInput) stationSearchInput.focus();
+            return;
+        }
+
+        if (window.allStationsList && window.allStationsList.length > 0) {
+            const existsInStationTable = window.allStationsList.some(s => String(s.code) === String(station));
+            if (!existsInStationTable) {
+                alert('خطا: شماره ایستگاه انتخابی در جدول ایستگاه‌ها (Station) یافت نشد.');
+                return;
+            }
+        }
+
+        // 3. Strict Uniqueness Validation: Station cannot be duplicate
+        if (window.allDevicesList && window.allDevicesList.length > 0) {
+            const isDuplicate = window.allDevicesList.some(dev => {
+                return String(dev.station_code) === String(station) && (!id || parseInt(dev.id) !== parseInt(id));
+            });
+            if (isDuplicate) {
+                alert('خطا: این شماره ایستگاه قبلاً به نمایشگر دیگری اختصاص داده شده است و نمی‌تواند تکراری باشد.');
+                return;
+            }
+        }
+
+        // 4. Strict IP Validation: IPv4 or IPv6 (if provided)
+        if (ip && !isValidIpAddress(ip)) {
+            alert('خطا: آدرس IP وارد شده نامعتبر است (تنها ساختار استاندارد IPv4 یا IPv6 پذیرفته می‌شود).');
+            if (deviceIpInput) deviceIpInput.focus();
+            return;
+        }
+        
+        const payload = { imei: imei, station_code: station, ip: ip };
+        let url = getApiUrl('/devices');
+        let method = 'POST';
+        
+        if (id) {
+            url = getApiUrl('/devices/' + id);
+            method = 'PUT';
+        }
+        
+        fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json', 'X-Citibig-Token': token },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                alert(data.message);
+                resetDeviceForm();
+                fetchDevicesData(token);
+                fetchChartsData(token, true); // Update charts
+            } else {
+                alert('خطا: ' + data.message);
+            }
+        })
+        .catch(err => alert("خطا در ثبت اطلاعات"));
+    });
+
+    window.editDevice = function(id, imei, stationCode, ip) {
+        deviceIdInput.value = id;
+        deviceImeiInput.value = imei;
+        if (deviceIpInput) deviceIpInput.value = ip || '';
+        deviceStationInput.value = stationCode;
+        populateDeviceStationsDropdown(stationCode, id);
+        cancelEditBtn.classList.remove('hidden');
+        document.querySelector('#deviceForm button[type="submit"]').innerHTML = '<i class="fa-solid fa-check"></i> ویرایش نمایشگر';
+        deviceForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    cancelEditBtn.addEventListener('click', resetDeviceForm);
+
+    function resetDeviceForm() {
+        deviceIdInput.value = '';
+        deviceForm.reset();
+        deviceStationInput.value = '';
+        if (stationSearchInput) stationSearchInput.value = '';
+        if (stationClearBtn) stationClearBtn.style.display = 'none';
+        if (stationDropdownList) stationDropdownList.classList.add('hidden');
+        cancelEditBtn.classList.add('hidden');
+        document.querySelector('#deviceForm button[type="submit"]').innerHTML = '<i class="fa-solid fa-plus"></i> ثبت نمایشگر';
+    }
+
+    window.deleteDevice = function(id) {
+        if(!confirm('آیا از حذف این نمایشگر مطمئن هستید؟')) return;
+        const token = localStorage.getItem('citibig_token');
+        fetch(getApiUrl('/devices/' + id), {
+            method: 'DELETE',
+            headers: { 'X-Citibig-Token': token }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                fetchDevicesData(token);
+                fetchChartsData(token, true);
+            } else {
+                alert('خطا: ' + data.message);
+            }
+        });
+    };
+
+    // Role-based UI visibility permissions
+    function applyRolePermissions(role) {
+        const deviceForm = document.getElementById('deviceForm');
+        const userManagementTab = document.getElementById('navUsersTab');
+        const usersSection = document.getElementById('sec-users');
+        const navDevicesTab = document.getElementById('navDevicesTab');
+        const devicesSection = document.getElementById('sec-devices');
+        
+        // 1. Device mapping visibility and CRUD restrictions
+        if (role === 'admin') {
+            if (navDevicesTab) {
+                navDevicesTab.classList.remove('hidden');
+                navDevicesTab.style.display = '';
+            }
+            if (devicesSection) {
+                devicesSection.classList.remove('hidden');
+                devicesSection.style.display = '';
+            }
+            if (deviceForm) deviceForm.classList.remove('hidden');
+        } else if (role === 'supervisor') {
+            if (navDevicesTab) {
+                navDevicesTab.classList.remove('hidden');
+                navDevicesTab.style.display = '';
+            }
+            if (devicesSection) {
+                devicesSection.classList.remove('hidden');
+                devicesSection.style.display = '';
+            }
+            if (deviceForm) deviceForm.classList.add('hidden');
+        } else {
+            // Operator: NO ACCESS to Device Management
+            if (navDevicesTab) {
+                navDevicesTab.classList.add('hidden');
+                navDevicesTab.style.display = 'none';
+            }
+            if (devicesSection) {
+                devicesSection.classList.add('hidden');
+                devicesSection.style.display = 'none';
+            }
+            if (deviceForm) deviceForm.classList.add('hidden');
+        }
+
+        // 2. User management access: admin and supervisor
+        if (role === 'admin' || role === 'supervisor') {
+            if (userManagementTab) {
+                userManagementTab.classList.remove('hidden');
+                userManagementTab.style.display = '';
+            }
+            if (usersSection) {
+                usersSection.classList.remove('hidden');
+                usersSection.style.display = '';
+            }
+            
+            const sectionTitle = document.getElementById('usersSectionTitle');
+            const roleSelect = document.getElementById('userRole');
+            if (role === 'supervisor') {
+                if (sectionTitle) {
+                    sectionTitle.innerHTML = '<i class="fa-solid fa-users"></i> مدیریت اپراتورها';
+                }
+                if (roleSelect) {
+                    roleSelect.value = 'operator';
+                    roleSelect.disabled = true;
+                    const roleGroup = document.getElementById('userRoleGroup');
+                    if (roleGroup) roleGroup.classList.add('hidden');
+                }
+            } else {
+                if (sectionTitle) {
+                    sectionTitle.innerHTML = '<i class="fa-solid fa-users"></i> مدیریت کاربران (سوپروایزر و اپراتور)';
+                }
+                if (roleSelect) {
+                    roleSelect.disabled = false;
+                    const roleGroup = document.getElementById('userRoleGroup');
+                    if (roleGroup) roleGroup.classList.remove('hidden');
+                }
+            }
+        } else {
+            // Operator: NO ACCESS to User Management
+            if (userManagementTab) {
+                userManagementTab.classList.add('hidden');
+                userManagementTab.style.display = 'none';
+            }
+            if (usersSection) {
+                usersSection.classList.add('hidden');
+                usersSection.style.display = 'none';
+            }
+        }
+
+        // Prevent operator from staying on restricted tabs via URL hash
+        if (role === 'operator' && (window.location.hash === '#sec-devices' || window.location.hash === '#sec-users')) {
+            window.location.hash = '#sec-overview';
+        }
+    }
+
+    // User Management CRUD Operations
+    function fetchUsersData(token) {
+        fetch(getApiUrl('/users'), {
+            method: 'GET',
+            headers: { 'X-Citibig-Token': token }
+        })
+        .then(res => res.json())
+        .then(data => {
+            renderUsersTable(data);
+        })
+        .catch(err => console.error("Error loading users", err));
+    }
+
+    function renderUsersTable(data) {
+        const tbody = document.querySelector('#usersTable tbody');
+        tbody.innerHTML = '';
+        const role = localStorage.getItem('citibig_role');
+        
+        const roleTranslation = {
+            'supervisor': 'سوپروایزر',
+            'operator': 'اپراتور'
+        };
+
+        if (data && data.length > 0) {
+            data.forEach(u => {
+                const tr = document.createElement('tr');
+                
+                let dateStr = '-';
+                if (u.created_at) {
+                    dateStr = new Date(u.created_at).toLocaleDateString('fa-IR');
+                }
+
+                let actionsHtml = '';
+                if (role === 'admin' || (role === 'supervisor' && u.role === 'operator')) {
+                    actionsHtml = `
+                        <button class="btn-action edit" onclick="editUser(${u.id}, '${u.username}', '${u.role}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-action delete" onclick="deleteUser(${u.id})"><i class="fa-solid fa-trash"></i></button>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td><b>${u.username}</b></td>
+                    <td><span class="badge ${u.role === 'supervisor' ? 'badge-warning' : 'badge-info'}">${roleTranslation[u.role] || u.role}</span></td>
+                    <td style="direction:ltr; text-align:right;">${dateStr}</td>
+                    <td style="text-align: center;">${actionsHtml || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">هیچ کاربری ثبت نشده است.</td></tr>';
+        }
+        reapplyTableSort('#usersTable');
+        applyTableFilter('#usersTable');
+    }
+
+    const userForm = document.getElementById('userForm');
+    const userIdInput = document.getElementById('userId');
+    const userUsernameInput = document.getElementById('userUsername');
+    const userPasswordInput = document.getElementById('userPassword');
+    const userRoleInput = document.getElementById('userRole');
+    const cancelUserEditBtn = document.getElementById('cancelUserEditBtn');
+
+    if (userForm) {
+        userForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = userIdInput.value;
+            const username = userUsernameInput.value.trim();
+            const password = userPasswordInput.value;
+            const role = userRoleInput.value;
+            const token = localStorage.getItem('citibig_token');
+            const currentRole = localStorage.getItem('citibig_role');
+            
+            if (!username || (!id && !password)) return;
+            
+            const payload = { username: username };
+            if (password) payload.password = password;
+            payload.role = (currentRole === 'supervisor') ? 'operator' : role;
+            
+            let url = getApiUrl('/users');
+            let method = 'POST';
+            
+            if (id) {
+                url = getApiUrl('/users/' + id);
+                method = 'PUT';
+            }
+            
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json', 'X-Citibig-Token': token },
+                body: JSON.stringify(payload)
+            })
+            .then(async res => {
+                const data = await res.json();
+                if(res.ok && (data.success || !id)) {
+                    alert(data.message || 'عملیات با موفقیت انجام شد.');
+                    resetUserForm();
+                    fetchUsersData(token);
+                } else {
+                    alert('خطا: ' + (data.message || 'خطایی در ثبت اطلاعات رخ داد.'));
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("خطا در ثبت اطلاعات");
+            });
+        });
+    }
+
+    window.editUser = function(id, username, role) {
+        userIdInput.value = id;
+        userUsernameInput.value = username;
+        userUsernameInput.disabled = true;
+        userPasswordInput.placeholder = 'کلمه عبور جدید (در صورت تمایل به تغییر)';
+        userPasswordInput.required = false;
+        userRoleInput.value = role;
+        cancelUserEditBtn.classList.remove('hidden');
+        document.querySelector('#userForm button[type="submit"]').innerHTML = '<i class="fa-solid fa-check"></i> ویرایش کاربر';
+    };
+
+    if (cancelUserEditBtn) {
+        cancelUserEditBtn.addEventListener('click', resetUserForm);
+    }
+
+    function resetUserForm() {
+        userIdInput.value = '';
+        userUsernameInput.disabled = false;
+        userUsernameInput.value = '';
+        userPasswordInput.value = '';
+        userPasswordInput.placeholder = 'کلمه عبور';
+        userPasswordInput.required = true;
+        
+        const currentRole = localStorage.getItem('citibig_role');
+        userRoleInput.value = 'operator';
+        cancelUserEditBtn.classList.add('hidden');
+        document.querySelector('#userForm button[type="submit"]').innerHTML = '<i class="fa-solid fa-user-plus"></i> ثبت کاربر';
+    }
+
+    // Stations Data Logic
+    function fetchStationsData(token) {
+        fetch(getApiUrl('/stations'), {
+            method: 'GET',
+            headers: { 'X-Citibig-Token': token }
+        })
+        .then(res => res.json())
+        .then(data => {
+            window.allStationsList = data || [];
+            renderStationsTable(data);
+            populateDeviceStationsDropdown();
+        })
+        .catch(err => console.error("Error loading stations", err));
+    }
+
+    function renderStationsTable(data) {
+        const tbody = document.querySelector('#stationsTable tbody');
+        tbody.innerHTML = '';
+        if (data && data.length > 0) {
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge badge-info">${item.code}</span></td>
+                    <td>${item.Station_Name || '-'}</td>
+                    <td>${item.station_custom || '-'}</td>
+                    <td style="text-align: center;">
+                        <button class="btn-action edit" onclick="editStation(${item.id}, '${item.code}', '${(item.Station_Name || '').replace(/'/g, "\\'")}', '${(item.station_custom || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-pen"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">هیچ ایستگاهی یافت نشد.</td></tr>';
+        }
+        reapplyTableSort('#stationsTable');
+        applyTableFilter('#stationsTable');
+    }
+
+    window.editStation = function(id, code, name, customName) {
+        document.getElementById('stationId').value = id;
+        document.getElementById('stationCodeInput').value = code;
+        document.getElementById('stationNameInput').value = name;
+        document.getElementById('stationCustomInput').value = customName;
+        
+        document.getElementById('stationForm').classList.remove('hidden');
+        document.getElementById('cancelStationEditBtn').classList.remove('hidden');
+        document.getElementById('stationForm').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    document.getElementById('cancelStationEditBtn').addEventListener('click', function() {
+        document.getElementById('stationForm').reset();
+        document.getElementById('stationForm').classList.add('hidden');
+        document.getElementById('cancelStationEditBtn').classList.add('hidden');
+    });
+
+    document.getElementById('stationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const id = document.getElementById('stationId').value;
+        const customName = document.getElementById('stationCustomInput').value.trim();
+        const token = localStorage.getItem('citibig_token');
+        
+        if (!id) return;
+        
+        fetch(getApiUrl('/stations/' + id + '/custom'), {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-Citibig-Token': token },
+            body: JSON.stringify({ station_custom: customName })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                alert(data.message);
+                document.getElementById('stationForm').reset();
+                document.getElementById('stationForm').classList.add('hidden');
+                fetchStationsData(token);
+            } else {
+                alert('خطا: ' + data.message);
+            }
+        })
+        .catch(err => alert("خطا در ثبت اطلاعات ایستگاه"));
+    });
+
+    // Routes Data Logic
+    function fetchRoutesData(token) {
+        fetch(getApiUrl('/routes'), {
+            method: 'GET',
+            headers: { 'X-Citibig-Token': token }
+        })
+        .then(res => res.json())
+        .then(data => {
+            renderRoutesTable(data);
+        })
+        .catch(err => console.error("Error loading routes", err));
+    }
+
+    function renderRoutesTable(data) {
+        const tbody = document.querySelector('#routesTable tbody');
+        tbody.innerHTML = '';
+        if (data && data.length > 0) {
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge badge-info">${item.code}</span></td>
+                    <td>${item.Terminal1 || '-'}</td>
+                    <td>${item.Terminal1_custom || '-'}</td>
+                    <td>${item.Terminal2 || '-'}</td>
+                    <td>${item.Terminal2_custom || '-'}</td>
+                    <td style="text-align: center;">
+                        <button class="btn-action edit" onclick="editRoute(${item.id}, '${item.code}', '${(item.Terminal1_custom || '').replace(/'/g, "\\'")}', '${(item.Terminal2_custom || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-pen"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">هیچ مسیری یافت نشد.</td></tr>';
+        }
+        reapplyTableSort('#routesTable');
+        applyTableFilter('#routesTable');
+    }
+
+    window.editRoute = function(id, code, t1Custom, t2Custom) {
+        document.getElementById('routeId').value = id;
+        document.getElementById('routeCodeInput').value = code;
+        document.getElementById('routeTerminal1Custom').value = t1Custom;
+        document.getElementById('routeTerminal2Custom').value = t2Custom;
+        
+        document.getElementById('routeForm').classList.remove('hidden');
+        document.getElementById('cancelRouteEditBtn').classList.remove('hidden');
+        document.getElementById('routeForm').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    document.getElementById('cancelRouteEditBtn').addEventListener('click', function() {
+        document.getElementById('routeForm').reset();
+        document.getElementById('routeForm').classList.add('hidden');
+        document.getElementById('cancelRouteEditBtn').classList.add('hidden');
+    });
+
+    document.getElementById('routeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const id = document.getElementById('routeId').value;
+        const t1Custom = document.getElementById('routeTerminal1Custom').value.trim();
+        const t2Custom = document.getElementById('routeTerminal2Custom').value.trim();
+        const token = localStorage.getItem('citibig_token');
+        
+        if (!id) return;
+        
+        fetch(getApiUrl('/routes/' + id + '/custom'), {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-Citibig-Token': token },
+            body: JSON.stringify({ Terminal1_custom: t1Custom, Terminal2_custom: t2Custom })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                alert(data.message);
+                document.getElementById('routeForm').reset();
+                document.getElementById('routeForm').classList.add('hidden');
+                fetchRoutesData(token);
+            } else {
+                alert('خطا: ' + data.message);
+            }
+        })
+        .catch(err => alert("خطا در ثبت اطلاعات مسیر"));
+    });
+
+    window.deleteUser = function(id) {
+        if(!confirm('آیا از حذف این کاربر مطمئن هستید؟')) return;
+        const token = localStorage.getItem('citibig_token');
+        fetch(getApiUrl('/users/' + id), {
+            method: 'DELETE',
+            headers: { 'X-Citibig-Token': token }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                fetchUsersData(token);
+            } else {
+                alert('خطا: ' + data.message);
+            }
+        })
+        .catch(err => alert("خطا در حذف کاربر"));
+    };
+
+    // Apply dashboard toggles (show/hide cards based on WP settings)
+    function applyDisplayToggles(toggles) {
+        if (!toggles) return;
+
+        // KPI
+        const kpiGrid = document.getElementById('sec-overview');
+        if (kpiGrid) {
+            kpiGrid.style.display = toggles.kpi ? '' : 'none';
+        }
+
+        // Color Chart
+        const cardColor = document.getElementById('cardColor');
+        if (cardColor) {
+            cardColor.style.display = toggles.color ? '' : 'none';
+        }
+
+        // Route Chart
+        const cardRoute = document.getElementById('cardRoute');
+        if (cardRoute) {
+            cardRoute.style.display = toggles.route ? '' : 'none';
+        }
+
+        // Bus Type Chart
+        const cardBusType = document.getElementById('cardBusType');
+        if (cardBusType) {
+            cardBusType.style.display = toggles.bustype ? '' : 'none';
+        }
+
+        // Shift Chart
+        const cardShift = document.getElementById('cardShift');
+        if (cardShift) {
+            cardShift.style.display = toggles.shift ? '' : 'none';
+        }
+
+        // Map
+        const secMap = document.getElementById('sec-map');
+        if (secMap) {
+            secMap.style.display = toggles.map ? '' : 'none';
+            const mapTab = document.querySelector('.sidebar a[href="#sec-map"]');
+            if (mapTab) mapTab.style.display = toggles.map ? '' : 'none';
+        }
+
+        // Live ETA
+        const secEta = document.getElementById('sec-eta');
+        if (secEta) {
+            secEta.style.display = toggles.eta ? '' : 'none';
+            const etaTab = document.querySelector('.sidebar a[href="#sec-eta"]');
+            if (etaTab) etaTab.style.display = toggles.eta ? '' : 'none';
+        }
+
+        // Delays (History)
+        const cardDelays = document.getElementById('cardDelays');
+        if (cardDelays) {
+            cardDelays.style.display = toggles.history ? '' : 'none';
+        }
+
+        // Health & Density (Network)
+        const cardHealthStatus = document.getElementById('cardHealthStatus');
+        if (cardHealthStatus) {
+            cardHealthStatus.style.display = toggles.network ? '' : 'none';
+        }
+        const cardDensity = document.getElementById('cardDensity');
+        if (cardDensity) {
+            cardDensity.style.display = toggles.network ? '' : 'none';
+        }
+        const healthTab = document.querySelector('.sidebar a[href="#sec-health"]');
+        if (healthTab) {
+            healthTab.style.display = (toggles.network || toggles.history) ? '' : 'none';
+        }
+
+        // Devices
+        const secDevices = document.getElementById('sec-devices');
+        const userRole = localStorage.getItem('citibig_role');
+        if (secDevices) {
+            secDevices.style.display = (toggles.device && userRole !== 'operator') ? '' : 'none';
+            const devTab = document.getElementById('navDevicesTab');
+            if (devTab) devTab.style.display = (toggles.device && userRole !== 'operator') ? '' : 'none';
+        }
+    }
+
+    // ==========================================
+    // Universal Interactive Table Column Sorting
+    // ==========================================
+    function toEnglishDigits(str) {
+        if (!str) return '';
+        return str.toString()
+            .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+            .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+    }
+
+    function setupTableSortHeaders() {
+        document.querySelectorAll('.data-table').forEach(table => {
+            const thead = table.querySelector('thead');
+            if (!thead) return;
+            const headers = thead.querySelectorAll('th');
+            headers.forEach(th => {
+                const text = th.innerText.trim();
+                if (text.includes('عملیات')) return;
+                th.classList.add('sortable');
+                if (!th.querySelector('.sort-icon')) {
+                    const icon = document.createElement('i');
+                    icon.className = 'fa-solid fa-sort sort-icon';
+                    th.appendChild(icon);
+                }
+            });
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        const th = e.target.closest('.data-table th.sortable');
+        if (!th) return;
+
+        const table = th.closest('table');
+        if (!table) return;
+
+        const thead = th.closest('thead');
+        const headers = Array.from(thead.querySelectorAll('th'));
+        const colIdx = headers.indexOf(th);
+        if (colIdx === -1) return;
+
+        const currentDir = th.classList.contains('sort-asc') ? 'asc' : (th.classList.contains('sort-desc') ? 'desc' : null);
+        const newDir = (currentDir === 'asc') ? 'desc' : 'asc';
+
+        // Reset sibling headers
+        headers.forEach(h => {
+            h.classList.remove('sort-asc', 'sort-desc');
+            const iconEl = h.querySelector('.sort-icon');
+            if (iconEl) iconEl.className = 'fa-solid fa-sort sort-icon';
+        });
+
+        // Set active header
+        th.classList.add(newDir === 'asc' ? 'sort-asc' : 'sort-desc');
+        const activeIcon = th.querySelector('.sort-icon');
+        if (activeIcon) {
+            activeIcon.className = `fa-solid fa-sort-${newDir === 'asc' ? 'up' : 'down'} sort-icon`;
+        }
+
+        sortTableByColumn(table, colIdx, newDir);
+    });
+
+    function sortTableByColumn(table, colIdx, direction) {
+        const tbody = table.querySelector('tbody');
+        if (!tbody) return;
+
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        if (rows.length <= 1) {
+            if (rows[0] && rows[0].querySelector('td[colspan]')) return;
+        }
+
+        const isAsc = (direction === 'asc');
+
+        rows.sort((rowA, rowB) => {
+            const rawA = rowA.children[colIdx]?.innerText.trim() || '';
+            const rawB = rowB.children[colIdx]?.innerText.trim() || '';
+
+            // Handle empty / placeholder dashes - push to end
+            const isEmptyA = (rawA === '' || rawA === '-');
+            const isEmptyB = (rawB === '' || rawB === '-');
+            if (isEmptyA && !isEmptyB) return 1;
+            if (!isEmptyA && isEmptyB) return -1;
+            if (isEmptyA && isEmptyB) return 0;
+
+            const cleanA = toEnglishDigits(rawA).replace(/,/g, '').trim();
+            const cleanB = toEnglishDigits(rawB).replace(/,/g, '').trim();
+
+            const isNumA = cleanA !== '' && !isNaN(Number(cleanA));
+            const isNumB = cleanB !== '' && !isNaN(Number(cleanB));
+
+            let comparison = 0;
+            if (isNumA && isNumB) {
+                comparison = Number(cleanA) - Number(cleanB);
+            } else {
+                comparison = rawA.localeCompare(rawB, 'fa', { numeric: true, sensitivity: 'base' });
+            }
+
+            return isAsc ? comparison : -comparison;
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
+    function reapplyTableSort(tableSelector) {
+        const table = (typeof tableSelector === 'string') ? document.querySelector(tableSelector) : tableSelector;
+        if (!table) return;
+        const activeTh = table.querySelector('thead th.sort-asc, thead th.sort-desc');
+        if (!activeTh) return;
+        const thead = table.querySelector('thead');
+        if (!thead) return;
+        const headers = Array.from(thead.querySelectorAll('th'));
+        const colIdx = headers.indexOf(activeTh);
+        if (colIdx === -1) return;
+        const direction = activeTh.classList.contains('sort-asc') ? 'asc' : 'desc';
+        sortTableByColumn(table, colIdx, direction);
+    }
+
+    // ==========================================
+    // Universal Interactive Table Column Filtering
+    // ==========================================
+    function applyTableFilter(tableId) {
+        const table = (typeof tableId === 'string') ? document.querySelector(tableId) : tableId;
+        if (!table) return;
+        const targetId = table.id ? `#${table.id}` : tableId;
+        const filterBar = document.querySelector(`.table-filter-bar[data-target="${targetId}"]`);
+        if (!filterBar) return;
+
+        const filterInputs = Array.from(filterBar.querySelectorAll('[data-col], [data-cols]'));
+        const activeFilters = filterInputs.map(input => {
+            const val = toEnglishDigits(input.value.trim().toLowerCase());
+            const col = input.getAttribute('data-col');
+            const cols = input.getAttribute('data-cols');
+            const colIndices = cols ? cols.split(',').map(c => parseInt(c.trim(), 10)) : [parseInt(col, 10)];
+            return { val, colIndices };
+        }).filter(f => f.val !== '');
+
+        const tbody = table.querySelector('tbody');
+        if (!tbody) return;
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        if (rows.length === 0) return;
+        if (rows.length === 1 && rows[0].querySelector('td[colspan]') && !rows[0].classList.contains('no-filter-match-row')) return;
+
+        let visibleCount = 0;
+        rows.forEach(row => {
+            if (row.classList.contains('no-filter-match-row')) return;
+
+            let rowMatches = true;
+            for (const filter of activeFilters) {
+                const matchedCol = filter.colIndices.some(colIdx => {
+                    const cell = row.children[colIdx];
+                    if (!cell) return false;
+                    const cellText = toEnglishDigits(cell.innerText.trim().toLowerCase());
+                    return cellText.includes(filter.val);
+                });
+                if (!matchedCol) {
+                    rowMatches = false;
+                    break;
+                }
+            }
+
+            if (rowMatches) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // "No matches" indicator
+        let noMatchRow = tbody.querySelector('.no-filter-match-row');
+        if (visibleCount === 0 && activeFilters.length > 0) {
+            if (!noMatchRow) {
+                const colSpan = table.querySelectorAll('thead th').length || 5;
+                noMatchRow = document.createElement('tr');
+                noMatchRow.className = 'no-filter-match-row';
+                noMatchRow.innerHTML = `<td colspan="${colSpan}" style="text-align: center; color: var(--text-muted); padding: 1.5rem;"><i class="fa-solid fa-filter-circle-xmark" style="margin-left: 6px;"></i> موردی منطبق با فیلترهای انتخابی یافت نشد.</td>`;
+                tbody.appendChild(noMatchRow);
+            } else {
+                noMatchRow.style.display = '';
+            }
+        } else if (noMatchRow) {
+            noMatchRow.style.display = 'none';
+        }
+    }
+
+    // Delegated Event Listeners for filter bars
+    document.addEventListener('input', function(e) {
+        const input = e.target.closest('.table-filter-bar input');
+        if (!input) return;
+        const filterBar = input.closest('.table-filter-bar');
+        if (!filterBar) return;
+        const target = filterBar.getAttribute('data-target');
+        applyTableFilter(target);
+    });
+
+    document.addEventListener('change', function(e) {
+        const select = e.target.closest('.table-filter-bar select');
+        if (!select) return;
+        const filterBar = select.closest('.table-filter-bar');
+        if (!filterBar) return;
+        const target = filterBar.getAttribute('data-target');
+        applyTableFilter(target);
+    });
+
+    document.addEventListener('click', function(e) {
+        const resetBtn = e.target.closest('.btn-reset-filter');
+        if (!resetBtn) return;
+        const filterBar = resetBtn.closest('.table-filter-bar');
+        if (!filterBar) return;
+        const target = filterBar.getAttribute('data-target');
+        filterBar.querySelectorAll('input, select').forEach(el => {
+            el.value = '';
+        });
+        applyTableFilter(target);
+    });
+
+    // Initialize sorting icons on startup
+    setupTableSortHeaders();
+</script>
+
+</body>
+</html>
