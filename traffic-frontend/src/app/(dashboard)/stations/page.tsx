@@ -38,9 +38,9 @@ export default function StationsPage() {
   }, []);
 
   const filterFields: FilterField[] = [
-    { id: 'code', label: 'کد ایستگاه', placeholder: 'فیلتر شماره یا کد...' },
-    { id: 'name', label: 'نام ایستگاه', placeholder: 'فیلتر نام اصلی ایستگاه...' },
-    { id: 'custom', label: 'نام دلخواه', placeholder: 'فیلتر نام سفارشی...' },
+    { id: 'code', label: 'کد ایستگاه', placeholder: 'جستجو با کد ایستگاه...' },
+    { id: 'name', label: 'نام اصلی', placeholder: 'جستجو در نام رسمی...' },
+    { id: 'custom', label: 'نام دلخواه', placeholder: 'جستجو در نام‌های سفارشی...' },
   ];
 
   const filteredData = useMemo(() => {
@@ -104,13 +104,13 @@ export default function StationsPage() {
     {
       key: 'Station_Name',
       title: 'نام اصلی ایستگاه',
-      width: '37%',
+      width: '35%',
       render: (item) => <span className="font-semibold text-slate-100">{item.Station_Name}</span>,
     },
     {
       key: 'station_custom',
       title: 'نام سفارشی (نمایشی)',
-      width: '35%',
+      width: '32%',
       render: (item) =>
         item.station_custom ? (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-500/10 text-amber-300 font-bold border border-amber-500/20">
@@ -122,17 +122,18 @@ export default function StationsPage() {
     },
     {
       key: 'actions',
-      title: 'عملیات',
+      title: 'ویرایش',
       sortable: false,
       align: 'center',
-      width: '10%',
+      width: '15%',
       render: (item) => (
         <button
           onClick={() => handleOpenEdit(item)}
-          className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-brand-500/20 hover:border-brand-500/30 border border-slate-700 transition-colors"
-          title="ویرایش نام سفارشی"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 hover:text-amber-200 border border-amber-500/30 transition-all font-medium text-xs shadow-sm"
+          title="ویرایش نام دلخواه در پنجره پاپ‌آپ"
         >
           <Edit3 className="w-3.5 h-3.5" />
+          <span>ویرایش (پاپ‌آپ)</span>
         </button>
       ),
     },
@@ -168,6 +169,13 @@ export default function StationsPage() {
           <span>{error}</span>
         </div>
       )}
+
+      <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs shadow-sm">
+        <Edit3 className="w-4 h-4 text-amber-400 flex-shrink-0" />
+        <span>
+          <b>راهنمای ویرایش:</b> جهت تغییر یا ثبت نام دلخواه هر ایستگاه، روی دکمه زرد‌رنگ <b>«ویرایش (پاپ‌آپ)»</b> در سطر همان ایستگاه کلیک فرمایید تا پنجره فرم باز شود.
+        </span>
+      </div>
 
       <DataTable
         title="فهرست کامل ایستگاه‌های تهران"

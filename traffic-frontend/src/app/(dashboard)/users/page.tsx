@@ -46,12 +46,13 @@ export default function UsersPage() {
   }, []);
 
   const filterFields: FilterField[] = [
-    { id: 'username', label: 'نام کاربری', placeholder: 'فیلتر نام کاربری...' },
+    { id: 'username', label: 'نام کاربری', placeholder: 'فیلتر و جستجوی نام کاربری...' },
     {
       id: 'role',
       label: 'نقش کاربری',
       type: 'select',
       options: [
+        { label: 'همه نقش‌ها', value: '' },
         { label: 'مدیر (ادمین)', value: 'admin' },
         { label: 'سوپروایزر', value: 'supervisor' },
         { label: 'اپراتور', value: 'operator' },
@@ -162,10 +163,11 @@ export default function UsersPage() {
             render: (item: UserItem) => (
               <button
                 onClick={() => handleDelete(item)}
-                className="p-1.5 rounded-lg bg-slate-800 text-rose-400 hover:text-white hover:bg-rose-500/20 border border-slate-700 transition-colors"
+                className="px-2 py-1 rounded-lg bg-rose-500/10 text-rose-400 hover:text-white hover:bg-rose-600 border border-rose-500/20 transition-all text-xs font-semibold flex items-center gap-1 mx-auto"
                 title="حذف کاربر"
               >
                 <Trash2 className="w-3.5 h-3.5" />
+                <span>حذف</span>
               </button>
             ),
           },
@@ -198,13 +200,26 @@ export default function UsersPage() {
           </Button>
 
           {isAdmin && (
-            <Button size="sm" onClick={() => setIsModalOpen(true)} className="gap-1.5">
+            <Button
+              size="sm"
+              onClick={() => setIsModalOpen(true)}
+              className="gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/30 font-bold"
+            >
               <UserPlus className="w-4 h-4" />
-              <span>کاربر جدید</span>
+              <span>➕ ایجاد کاربر جدید (فرم پاپ‌آپ)</span>
             </Button>
           )}
         </div>
       </div>
+
+      {isAdmin && (
+        <div className="bg-amber-500/10 border border-amber-500/25 rounded-xl px-4 py-2.5 text-xs text-amber-300 flex items-center justify-between gap-2 shadow-sm">
+          <div className="flex items-center gap-2">
+            <span className="font-bold bg-amber-500/20 px-2 py-0.5 rounded text-amber-200">راهنما:</span>
+            <span>باکس فیلترهای بالای جدول صرفاً برای جستجو و پالایش است. جهت ثبت یا تغییر کاربران، از دکمه سبز رنگ بالای صفحه استفاده فرمایید.</span>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center gap-2">

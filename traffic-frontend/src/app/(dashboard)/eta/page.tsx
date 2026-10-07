@@ -42,9 +42,9 @@ export default function EtaPage() {
   }, []);
 
   const filterFields: FilterField[] = [
-    { id: 'station', label: 'نام ایستگاه', placeholder: 'فیلتر نام ایستگاه...' },
-    { id: 'line', label: 'کد خط', placeholder: 'فیلتر شماره خط...' },
-    { id: 'eta', label: 'زمان ورود (ETA)', placeholder: 'فیلتر زمان تخمینی...' },
+    { id: 'station', label: 'نام ایستگاه', placeholder: 'فیلتر و جستجوی نام ایستگاه...' },
+    { id: 'line', label: 'کد خط', placeholder: 'فیلتر و جستجوی شماره خط...' },
+    { id: 'eta', label: 'زمان ورود (ETA)', placeholder: 'فیلتر و جستجوی زمان تخمینی...' },
   ];
 
   // Apply multi-field filtering

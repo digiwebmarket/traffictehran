@@ -39,9 +39,9 @@ export default function RoutesPage() {
   }, []);
 
   const filterFields: FilterField[] = [
-    { id: 'code', label: 'کد خط', placeholder: 'فیلتر شماره خط...' },
-    { id: 'origin', label: 'مبدأ', placeholder: 'فیلتر مبدأ (اصلی/سفارشی)...' },
-    { id: 'destination', label: 'مقصد', placeholder: 'فیلتر مقصد (اصلی/سفارشی)...' },
+    { id: 'code', label: 'کد خط', placeholder: 'جستجو با شماره خط...' },
+    { id: 'origin', label: 'مبدأ', placeholder: 'جستجو در مبدأ (اصلی/سفارشی)...' },
+    { id: 'destination', label: 'مقصد', placeholder: 'جستجو در مقصد (اصلی/سفارشی)...' },
   ];
 
   const filteredData = useMemo(() => {
@@ -137,17 +137,18 @@ export default function RoutesPage() {
     },
     {
       key: 'actions',
-      title: 'عملیات',
+      title: 'ویرایش',
       sortable: false,
       align: 'center',
-      width: '10%',
+      width: '15%',
       render: (item) => (
         <button
           onClick={() => handleOpenEdit(item)}
-          className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-brand-500/20 hover:border-brand-500/30 border border-slate-700 transition-colors"
-          title="ویرایش پایانه‌ها"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 hover:text-amber-200 border border-amber-500/30 transition-all font-medium text-xs shadow-sm"
+          title="ویرایش پایانه‌ها در پنجره پاپ‌آپ"
         >
           <Edit3 className="w-3.5 h-3.5" />
+          <span>ویرایش (پاپ‌آپ)</span>
         </button>
       ),
     },
@@ -183,6 +184,13 @@ export default function RoutesPage() {
           <span>{error}</span>
         </div>
       )}
+
+      <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs shadow-sm">
+        <Edit3 className="w-4 h-4 text-amber-400 flex-shrink-0" />
+        <span>
+          <b>راهنمای ویرایش:</b> جهت تغییر یا ثبت پایانه‌های دلخواه هر خط، روی دکمه زرد‌رنگ <b>«ویرایش (پاپ‌آپ)»</b> در سطر همان مسیر کلیک فرمایید تا پنجره فرم باز شود.
+        </span>
+      </div>
 
       <DataTable
         title="فهرست خطوط اتوبوس‌رانی ترافیک تهران"

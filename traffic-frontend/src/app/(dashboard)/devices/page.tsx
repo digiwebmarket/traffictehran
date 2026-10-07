@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { Monitor, Plus, Edit3, Trash2, RefreshCw, AlertCircle, Check, X, Filter, RotateCcw } from 'lucide-react';
+import { Monitor, Plus, Edit3, Trash2, RefreshCw, AlertCircle, Check, X, Filter, RotateCcw, Search } from 'lucide-react';
 import { apiGetDevices, apiGetStations, apiSaveDevice, apiDeleteDevice, DeviceItem, StationItem } from '@/lib/api';
 import { getStoredSession } from '@/lib/auth';
 import { DataTable, Column } from '@/components/ui/DataTable';
@@ -267,22 +267,24 @@ export default function DevicesPage() {
             title: 'عملیات',
             sortable: false,
             align: 'center' as const,
-            width: '10%',
+            width: '15%',
             render: (item: DeviceItem) => (
               <div className="flex items-center justify-center gap-1.5">
                 <button
                   onClick={() => handleOpenEdit(item)}
-                  className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-brand-500/20 border border-slate-700 transition-colors"
-                  title="ویرایش نمایشگر"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sky-500/10 text-sky-300 hover:bg-sky-500/20 hover:text-sky-200 border border-sky-500/30 transition-all font-medium text-xs shadow-sm"
+                  title="ویرایش نمایشگر در پنجره پاپ‌آپ"
                 >
                   <Edit3 className="w-3.5 h-3.5" />
+                  <span>ویرایش</span>
                 </button>
                 <button
                   onClick={() => handleDelete(item)}
-                  className="p-1.5 rounded-lg bg-slate-800 text-rose-400 hover:text-white hover:bg-rose-500/20 border border-slate-700 transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 hover:text-rose-200 border border-rose-500/30 transition-all font-medium text-xs shadow-sm"
                   title="حذف نمایشگر"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
+                  <span>حذف</span>
                 </button>
               </div>
             ),
@@ -316,9 +318,13 @@ export default function DevicesPage() {
           </Button>
 
           {isAdmin && (
-            <Button size="sm" onClick={handleOpenAdd} className="gap-1.5">
+            <Button
+              size="sm"
+              onClick={handleOpenAdd}
+              className="gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20"
+            >
               <Plus className="w-4 h-4" />
-              <span>ثبت نمایشگر جدید</span>
+              <span>ثبت نمایشگر جدید (فرم پاپ‌آپ)</span>
             </Button>
           )}
         </div>
@@ -331,6 +337,13 @@ export default function DevicesPage() {
         </div>
       )}
 
+      <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs shadow-sm">
+        <Monitor className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+        <span>
+          <b>راهنمای نمایشگرها:</b> جهت ثبت نمایشگر جدید از دکمه سبز‌رنگ بالای صفحه استفاده فرمایید؛ و جهت ویرایش هر نمایشگر، روی دکمه آبی‌رنگ <b>«ویرایش»</b> در سطر همان نمایشگر کلیک فرمایید تا فرم پاپ‌آپ باز شود.
+        </span>
+      </div>
+
       <DataTable
         title="فهرست نمایشگرهای فعال"
         subtitle={`مجموع ${toPersianDigits(filteredData.length)} نمایشگر تعریف‌شده`}
@@ -342,35 +355,43 @@ export default function DevicesPage() {
         exportFileName="tehran-devices"
         pageSize={20}
         headerFilterBar={
-          <div className="w-full bg-slate-950/60 border-b border-slate-800/80 p-3.5 flex flex-wrap items-center gap-3 text-xs">
-            <div className="flex items-center gap-1.5 text-slate-400 font-semibold pl-2">
-              <Filter className="w-3.5 h-3.5 text-brand-400" />
-              <span>فیلترهای جدول:</span>
+          <div className="w-full bg-slate-950/80 border-b border-indigo-500/20 p-3.5 flex flex-wrap items-center gap-3 text-xs">
+            <div className="flex items-center gap-1.5 pl-2">
+              <span className="px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 font-bold text-[11px] flex items-center gap-1.5 shadow-sm">
+                <Search className="w-3.5 h-3.5 text-indigo-400" />
+                <span>پالایش و فیلتر لحظه‌ای جدول</span>
+              </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5 flex-1">
               {/* IMEI Filter */}
               <div className="flex items-center gap-1.5 min-w-[140px]">
                 <span className="text-slate-400 text-[11px] whitespace-nowrap">کد IMEI:</span>
-                <input
-                  type="text"
-                  value={filters.imei || ''}
-                  onChange={(e) => setFilters((prev) => ({ ...prev, imei: e.target.value }))}
-                  placeholder="IMEI..."
-                  className="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 dir-ltr"
-                />
+                <div className="relative w-full">
+                  <Search className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={filters.imei || ''}
+                    onChange={(e) => setFilters((prev) => ({ ...prev, imei: e.target.value }))}
+                    placeholder="جستجو..."
+                    className="w-full bg-slate-900 border border-slate-700/80 rounded-lg pr-8 pl-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dir-ltr"
+                  />
+                </div>
               </div>
 
               {/* IP Filter */}
               <div className="flex items-center gap-1.5 min-w-[130px]">
                 <span className="text-slate-400 text-[11px] whitespace-nowrap">آدرس IP:</span>
-                <input
-                  type="text"
-                  value={filters.ip || ''}
-                  onChange={(e) => setFilters((prev) => ({ ...prev, ip: e.target.value }))}
-                  placeholder="IP..."
-                  className="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 dir-ltr"
-                />
+                <div className="relative w-full">
+                  <Search className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={filters.ip || ''}
+                    onChange={(e) => setFilters((prev) => ({ ...prev, ip: e.target.value }))}
+                    placeholder="جستجو..."
+                    className="w-full bg-slate-900 border border-slate-700/80 rounded-lg pr-8 pl-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dir-ltr"
+                  />
+                </div>
               </div>
 
               {/* Station Filter from Station Table (Combobox) */}
@@ -390,13 +411,16 @@ export default function DevicesPage() {
               {/* Free Text Station Search (Name / Custom / Code) */}
               <div className="flex items-center gap-1.5 min-w-[160px]">
                 <span className="text-slate-400 text-[11px] whitespace-nowrap">جستجوی متنی:</span>
-                <input
-                  type="text"
-                  value={filters.station_text || ''}
-                  onChange={(e) => setFilters((prev) => ({ ...prev, station_text: e.target.value }))}
-                  placeholder="نام، دلخواه یا کد ایستگاه..."
-                  className="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500"
-                />
+                <div className="relative w-full">
+                  <Search className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={filters.station_text || ''}
+                    onChange={(e) => setFilters((prev) => ({ ...prev, station_text: e.target.value }))}
+                    placeholder="نام، دلخواه یا کد..."
+                    className="w-full bg-slate-900 border border-slate-700/80 rounded-lg pr-8 pl-2.5 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  />
+                </div>
               </div>
             </div>
 
@@ -406,7 +430,7 @@ export default function DevicesPage() {
               title="بازنشانی فیلترها"
               className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
             >
-              <RotateCcw className="w-3 h-3" />
+              <RotateCcw className="w-3 h-3 text-indigo-400" />
               <span>بازنشانی</span>
             </button>
           </div>
