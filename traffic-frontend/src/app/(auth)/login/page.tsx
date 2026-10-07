@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Bus, User, Lock, AlertCircle } from 'lucide-react';
 import { apiLogin } from '@/lib/api';
 import { saveSession, getStoredSession } from '@/lib/auth';
@@ -48,18 +49,37 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#070913] to-black">
-      {/* Glow shapes */}
-      <div className="absolute top-1/4 -right-20 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-950">
+      {/* Background Image with Dark Vignette & Atmospheric Overlay */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <Image
+          src="/images/login-bg.jpg"
+          alt="ایستگاه اتوبوسرانی و سامانه مانیتورینگ ترافیک تهران"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center scale-105"
+        />
+        {/* Layer 1: Dark tint for high contrast */}
+        <div className="absolute inset-0 bg-slate-950/70" />
+        {/* Layer 2: Ambient blur to keep text sharp */}
+        <div className="absolute inset-0 backdrop-blur-[2px]" />
+        {/* Layer 3: Vignette gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/80" />
+      </div>
 
-      <div className="w-full max-w-md bg-slate-900/80 border border-slate-800/80 rounded-3xl p-7 sm:p-8 shadow-2xl backdrop-blur-2xl relative z-10">
+      {/* Decorative ambient glowing orbs */}
+      <div className="absolute top-1/4 -right-20 w-96 h-96 bg-brand-500/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Glassmorphic Login Card */}
+      <div className="w-full max-w-md bg-slate-900/85 border border-white/10 rounded-3xl p-7 sm:p-8 shadow-2xl shadow-black/80 backdrop-blur-2xl relative z-10 animate-fadeIn">
         <div className="text-center space-y-3 mb-8">
-          <div className="inline-flex p-3.5 rounded-2xl bg-gradient-to-tr from-brand-600 to-sky-400 text-white shadow-lg shadow-brand-500/25">
+          <div className="inline-flex p-3.5 rounded-2xl bg-gradient-to-tr from-brand-600 via-rose-600 to-amber-500 text-white shadow-lg shadow-brand-500/25">
             <Bus className="w-8 h-8" />
           </div>
-          <h2 className="text-xl font-black text-white tracking-tight">ورود به سامانه سیتی‌بیگ</h2>
-          <p className="text-xs text-slate-400">داشبورد یکپارچه نظارت و کنترل ترافیک تهران</p>
+          <h2 className="text-xl font-black text-white tracking-tight">ورود به سامانه مانیتورینگ ترافیک</h2>
+          <p className="text-xs text-slate-300">مرکز پایش هوشمند ناوگان اتوبوسرانی و نمایشگرهای دیجیتال تهران</p>
         </div>
 
         {error && (
@@ -94,16 +114,17 @@ export default function LoginPage() {
             type="submit"
             size="lg"
             isLoading={isLoading}
-            className="w-full mt-2 font-bold"
+            className="w-full mt-2 font-bold shadow-lg shadow-brand-600/30 hover:shadow-brand-600/50 transition-all"
           >
             ورود به داشبورد
           </Button>
         </form>
 
-        <div className="mt-8 text-center text-[11px] text-slate-500">
-          سامانه هوشمند مانیتورینگ ناوگان شهری و نمایشگرهای دیجیتال
+        <div className="mt-8 text-center text-[11px] text-slate-400 border-t border-slate-800/80 pt-4">
+          مرکز کنترل و نظارت یکپارچه خطوط اتوبوسرانی تهران
         </div>
       </div>
     </div>
   );
 }
+
