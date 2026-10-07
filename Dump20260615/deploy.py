@@ -72,7 +72,7 @@ def deploy_next_frontend(ftp, config):
 
 def deploy_plugin(ftp, config):
     print("\n--- Deploying WordPress Plugin ---")
-    local_plugin = BASE_DIR / 'citibig-transit-dashboard'
+    local_plugin = BASE_DIR.parent / 'backend' / 'citibig-transit-dashboard'
     remote_plugin = config['FTP_REMOTE_PLUGIN']
     upload_directory(ftp, str(local_plugin), remote_plugin)
     print("Plugin deployed successfully.")

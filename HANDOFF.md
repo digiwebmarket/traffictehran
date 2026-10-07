@@ -7,7 +7,8 @@
 - **پروژه:** سامانه داشبورد و مانیتورینگ آنلاین ترافیک تهران (Transit Monitoring System)
 - **مخزن گیت‌هاب:** https://github.com/digiwebmarket/traffictehran.git (شاخه main کاملاً همگام و سینک با آخرین کامیت)
 - **فرانت‌اند مدرن:** توسعه‌یافته با Next.js 15.1.7، React 19، TypeScript، Tailwind CSS در پوشه 	raffic-frontend/ با استانداردهای دیزاین‌سیستم پروژه fkarsanji-next
-- **فرانت‌اند قدیمی:** citibig-transit-dashboard و citibig-remote-app بدون دستکاری و به عنوان نسخه پشتیبان در دایرکتوری Dump حفظ شده است.
+- **بک‌اند سیستم (پلاگین وردپرس):** پوشه backend/citibig-transit-dashboard/ (شامل REST API با namespace اختصاصی citibig/v1، دیتابیس و پنل مدیریت).
+- **آرشیو و نسخه‌های قدیمی:** پوشه Dump20260615/ شامل دامپ‌های SQL دیتابیس و فرانت قدیمی citibig-remote-app.
 - **محیط سرور و استقرار:**
   - مسیر لایو فرانت جدید: /public_html/v2tehrandashboard/
   - آدرس عمومی لایو: [http://dev.citibig.com/v2tehrandashboard/](http://dev.citibig.com/v2tehrandashboard/)
