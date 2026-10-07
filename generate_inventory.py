@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Script to generate SYSTEM_MODULES_INVENTORY.xlsx for the Tehran Transit Monitoring Dashboard.
-Matches the exact visual hierarchy, fonts, colors, and layout of afkarsanji-next's inventory.
+Exclusively covers the Frontend (Next.js 15 + TypeScript) architecture - exactly 25 modules.
+Matches the visual hierarchy, fonts, colors, and layout of afkarsanji-next's inventory.
 """
 import sys
 import openpyxl
@@ -24,7 +25,6 @@ def build_inventory():
     zebra_odd = PatternFill(start_color='FFFFFF', end_color='FFFFFF', fill_type='solid')        # white
     reused_badge_fill = PatternFill(start_color='ECFDF5', end_color='ECFDF5', fill_type='solid')# emerald-50
     new_badge_fill = PatternFill(start_color='EFF6FF', end_color='EFF6FF', fill_type='solid')   # blue-50
-    summary_hdr_fill = PatternFill(start_color='0F172A', end_color='0F172A', fill_type='solid') # slate-900
     total_fill = PatternFill(start_color='F1F5F9', end_color='F1F5F9', fill_type='solid')
 
     title_font = Font(name=font_family, size=13, bold=True, color='0F172A')
@@ -56,10 +56,9 @@ def build_inventory():
     align_left = Alignment(horizontal='left', vertical='center', wrap_text=True)
 
     # =========================================================================
-    # 1. DATA DEFINITIONS
+    # 1. PURE FRONTEND MODULES (Exactly 25 modules)
     # =========================================================================
-    # All 30 modules
-    all_modules = [
+    frontend_modules = [
         # Reused / Shared (9 modules)
         {
             "id": 1,
@@ -170,7 +169,7 @@ def build_inventory():
             "adaptation": "نمایش نقش‌های کاربری، وضعیت آنلاین سرور و برچسب‌های هشدارهای سیستمی."
         },
 
-        # New Dedicated Modules (21 modules)
+        # New Dedicated Frontend Modules (16 modules)
         {
             "id": 10,
             "category": "معماری ساختار و لی‌اوت (Layout)",
@@ -305,7 +304,7 @@ def build_inventory():
         },
         {
             "id": 21,
-            "category": "دیزاین‌سیستم و استایل‌ها",
+            "category": "معماری ساختار و استایل‌ها",
             "name": "GlobalsCss",
             "persian_name": "استایل‌های سراسری، توکن‌های رنگی و فونت",
             "path": "traffic-frontend/src/app/globals.css",
@@ -362,76 +361,14 @@ def build_inventory():
             "desc": "توابع تبدیل اعداد انگلیسی به فارسی (toPersianDigits)، برعکس، فرمت‌بندی اعداد و توابع تلفیق کلاس‌های Tailwind با clsx/cn.",
             "status": "تایید شده (0 Errors)",
             "adaptation": "بومی‌سازی کامل تمام ارقام و نمایش صحیح کدهای خط و ایستگاه در سراسر سامانه."
-        },
-        {
-            "id": 26,
-            "category": "بک‌اند و وب‌سرویس (WordPress Backend)",
-            "name": "CitibigPluginCore",
-            "persian_name": "هسته و راه‌انداز اصلی پلاگین مانیتورینگ وردپرس",
-            "path": "backend/citibig-transit-dashboard/citibig-transit-dashboard.php",
-            "type": "هسته پلاگین PHP",
-            "origin": "جدید اختصاصی (New Dedicated)",
-            "desc": "تعریف ثابت‌های نسخه، مسیرها، بارگذاری کلاس‌های دیتابیس، کنترلرهای API، پنل ادمین و ایجاد شورت‌کدهای مربوطه.",
-            "status": "تایید شده (0 Errors)",
-            "adaptation": "معماری ماژولار تفکیک‌شده از دایرکتوری اصلی و اتصال به محیط وردپرس."
-        },
-        {
-            "id": 27,
-            "category": "بک‌اند و وب‌سرویس (WordPress Backend)",
-            "name": "CitibigRestApi",
-            "persian_name": "کنترلر جامع اندپوینت‌های REST API سامانه",
-            "path": "backend/citibig-transit-dashboard/includes/class-citibig-api.php",
-            "type": "کنترلر REST API",
-            "origin": "جدید اختصاصی (New Dedicated)",
-            "desc": "ثبت و پردازش کلیه روت‌های REST وردپرس زیرمسیر citibig/v1 اعم از /kpi، /charts، /stations، /routes، /devices، /users.",
-            "status": "تایید شده (0 Errors)",
-            "adaptation": "توسعه اندپوینت‌های پرسرعت بدون وابستگی به فرانت قدیمی با هندلرهای JSON استاندارد."
-        },
-        {
-            "id": 28,
-            "category": "بک‌اند و وب‌سرویس (WordPress Backend)",
-            "name": "CitibigDatabase",
-            "persian_name": "لایه مدل دیتابیس و مدیریت کوئری‌های ترافیک",
-            "path": "backend/citibig-transit-dashboard/includes/class-citibig-db.php",
-            "type": "لایه دسترسی به داده (Model)",
-            "origin": "جدید اختصاصی (New Dedicated)",
-            "desc": "برقراری کوئری‌های SQL جداول Station، Route، device_station_mapping، code_eta، جوین‌ها و عملیات درج، ویرایش و حذف.",
-            "status": "تایید شده (0 Errors)",
-            "adaptation": "ارتقای کوئری get_all_device_mappings جهت استخراج فیلد station_custom برای حل ایراد ۱ کارفرما."
-        },
-        {
-            "id": 29,
-            "category": "بک‌اند و وب‌سرویس (WordPress Backend)",
-            "name": "CitibigAdmin",
-            "persian_name": "پنل مدیریت داخلی وردپرس و تنظیمات سرور",
-            "path": "backend/citibig-transit-dashboard/includes/class-citibig-admin.php",
-            "type": "کنترلر ادمین وردپرس",
-            "origin": "جدید اختصاصی (New Dedicated)",
-            "desc": "ایجاد منوهای مدیریت ترافیک تهران در پیشخوان وردپرس، تنظیمات ارتباطی و پایش سلامت سیستم.",
-            "status": "تایید شده (0 Errors)",
-            "adaptation": "امکان دسترسی مدیران وردپرس به ابزارهای تشخیصی و مانیتورینگ داخلی."
-        },
-        {
-            "id": 30,
-            "category": "ابزارهای DevOps و استقرار",
-            "name": "DeployPipeline",
-            "persian_name": "پایپ‌لاین اتوماتیک انتقال FTP و استقرار پروداکشن",
-            "path": "Dump20260615/deploy-v2.py",
-            "type": "اسکریپت استقرار خودکار",
-            "origin": "جدید اختصاصی (New Dedicated)",
-            "desc": "اسکریپت هوشمند برای بسته‌بندی بیلد خروجی، انتقال به هاست از طریق FTP، استخراج خودکار و اصلاح دسترسی فایل‌ها (644) و پوشه‌ها (755).",
-            "status": "تایید شده (0 Errors)",
-            "adaptation": "حذف کامل خطاهای مجوز فایل در سرور لینوکس و خودکارسازی استقرار دایرکتوری v2tehrandashboard."
         }
     ]
 
-    # Reused list
-    reused_modules = [m for m in all_modules if 'Reused' in m['origin'] or 'مشترک' in m['origin']]
-    # New list
-    new_modules = [m for m in all_modules if 'New' in m['origin'] or 'جدید' in m['origin']]
+    reused_modules = [m for m in frontend_modules if 'Reused' in m['origin'] or 'مشترک' in m['origin']]
+    new_modules = [m for m in frontend_modules if 'New' in m['origin'] or 'جدید' in m['origin']]
 
     # =========================================================================
-    # SHEET 1: شناسنامه جامع ماژول‌ها (All 30 modules)
+    # SHEET 1: شناسنامه جامع ماژول‌های فرانت‌اند (All 25 Frontend Modules)
     # =========================================================================
     ws1 = wb.create_sheet(title="شناسنامه جامع ماژول‌ها")
     ws1.sheet_view.rightToLeft = True
@@ -440,15 +377,13 @@ def build_inventory():
     ws1.merge_cells("A1:H1")
     ws1.row_dimensions[1].height = 40.0
     cell1 = ws1["A1"]
-    cell1.value = "💎 شناسنامه جامع و تفکیک‌شده ۳۰ ماژول سامانه داشبورد و مانیتورینگ ترافیک تهران (Transit Monitoring System)"
+    cell1.value = "💎 شناسنامه جامع و تفکیک‌شده ۲۵ ماژول فرانت‌اند سامانه مانیتورینگ ترافیک تهران (Next.js 15 Frontend)"
     cell1.font = title_font
     cell1.fill = title_fill
     cell1.alignment = align_center
 
-    # Empty spacer
     ws1.row_dimensions[2].height = 10.0
 
-    # Headers
     headers1 = [
         "ردیف",
         "دسته و لایه معماری",
@@ -467,71 +402,60 @@ def build_inventory():
         c.alignment = align_center
         c.border = border_thin
 
-    # Populate Data
-    for row_idx, mod in enumerate(all_modules, 4):
+    for row_idx, mod in enumerate(frontend_modules, 4):
         ws1.row_dimensions[row_idx].height = 26.0
         is_even = (row_idx % 2 == 0)
         row_fill = zebra_even if is_even else zebra_odd
-
         is_reused = "Reused" in mod["origin"] or "مشترک" in mod["origin"]
 
-        # Col A: ID
         cA = ws1.cell(row_idx, 1, mod["id"])
         cA.alignment = align_center
         cA.font = data_font_bold
         cA.fill = row_fill
         cA.border = border_thin
 
-        # Col B: Category
         cB = ws1.cell(row_idx, 2, mod["category"])
         cB.alignment = align_right
         cB.font = data_font
         cB.fill = row_fill
         cB.border = border_thin
 
-        # Col C: Name
         cC = ws1.cell(row_idx, 3, f"{mod['name']} ({mod['persian_name']})")
         cC.alignment = align_right
         cC.font = data_font_bold
         cC.fill = row_fill
         cC.border = border_thin
 
-        # Col D: Path
         cD = ws1.cell(row_idx, 4, mod["path"])
         cD.alignment = align_left
         cD.font = path_font
         cD.fill = row_fill
         cD.border = border_thin
 
-        # Col E: Type
         cE = ws1.cell(row_idx, 5, mod["type"])
         cE.alignment = align_center
         cE.font = data_font
         cE.fill = row_fill
         cE.border = border_thin
 
-        # Col F: Origin
         cF = ws1.cell(row_idx, 6, mod["origin"])
         cF.alignment = align_center
         cF.font = reused_badge_font if is_reused else new_badge_font
         cF.fill = reused_badge_fill if is_reused else new_badge_fill
         cF.border = border_thin
 
-        # Col G: Description
         cG = ws1.cell(row_idx, 7, mod["desc"])
         cG.alignment = align_right
         cG.font = data_font
         cG.fill = row_fill
         cG.border = border_thin
 
-        # Col H: Status
         cH = ws1.cell(row_idx, 8, mod["status"])
         cH.alignment = align_center
         cH.font = status_font
         cH.fill = row_fill
         cH.border = border_thin
 
-    # Set Column Widths for ws1
     col_widths1 = {
         "A": 8.0,
         "B": 30.0,
@@ -546,7 +470,7 @@ def build_inventory():
         ws1.column_dimensions[col_letter].width = width
 
     # =========================================================================
-    # SHEET 2: ماژول‌های مشترک و بازاستفاده‌شده (Reused from Design System)
+    # SHEET 2: ماژول‌های مشترک و بازاستفاده‌شده (9 Modules)
     # =========================================================================
     ws2 = wb.create_sheet(title="ماژول‌های مشترک و بازاستفاده")
     ws2.sheet_view.rightToLeft = True
@@ -554,7 +478,7 @@ def build_inventory():
     ws2.merge_cells("A1:G1")
     ws2.row_dimensions[1].height = 40.0
     cell2 = ws2["A1"]
-    cell2.value = "🔄 ماژول‌های مشترک و بازاستفاده‌شده از دیزاین‌سیستم پکیج UI (@afkarsanji/ui)"
+    cell2.value = "🔄 ماژول‌های مشترک و بازاستفاده‌شده فرانت‌اند از دیزاین‌سیستم پکیج UI (@afkarsanji/ui)"
     cell2.font = title_font
     cell2.fill = title_fill
     cell2.alignment = align_center
@@ -564,7 +488,7 @@ def build_inventory():
     headers2 = [
         "ردیف",
         "نام کامپوننت UI",
-        "مسیر فایل در پروژه ترافیک",
+        "مسیر فایل سورس در فرانت",
         "نوع کامپوننت",
         "شرح قابلیت‌ها و ساختار پایه",
         "نحوه تطبیق و شخصی‌سازی در سامانه ترافیک تهران",
@@ -629,7 +553,6 @@ def build_inventory():
         "A": 8.0,
         "B": 36.0,
         "C": 48.0,
-        "E": 24.0,
         "D": 22.0,
         "E": 60.0,
         "F": 65.0,
@@ -639,7 +562,7 @@ def build_inventory():
         ws2.column_dimensions[col_letter].width = width
 
     # =========================================================================
-    # SHEET 3: ماژول‌های جدید اختصاصی (New Dedicated Modules)
+    # SHEET 3: ماژول‌های جدید اختصاصی فرانت‌اند (16 Modules)
     # =========================================================================
     ws3 = wb.create_sheet(title="ماژول‌های جدید اختصاصی")
     ws3.sheet_view.rightToLeft = True
@@ -647,7 +570,7 @@ def build_inventory():
     ws3.merge_cells("A1:G1")
     ws3.row_dimensions[1].height = 40.0
     cell3 = ws3["A1"]
-    cell3.value = "🚀 ماژول‌ها و لایه‌های جدید توسعه‌یافته اختصاصی سامانه ترافیک تهران (۲۱ ماژول)"
+    cell3.value = "🚀 ماژول‌ها و لایه‌های جدید اختصاصی فرانت‌اند مانیتورینگ ترافیک تهران (۱۶ ماژول)"
     cell3.font = title_font
     cell3.fill = title_fill
     cell3.alignment = align_center
@@ -731,7 +654,7 @@ def build_inventory():
         ws3.column_dimensions[col_letter].width = width
 
     # =========================================================================
-    # SHEET 4: خلاصه معماری و برآورد فنی (Technical & Architectural Summary)
+    # SHEET 4: خلاصه معماری و برآورد فنی فرانت‌اند
     # =========================================================================
     ws4 = wb.create_sheet(title="خلاصه معماری و برآورد فنی")
     ws4.sheet_view.rightToLeft = True
@@ -739,7 +662,7 @@ def build_inventory():
     ws4.merge_cells("A1:G1")
     ws4.row_dimensions[1].height = 42.0
     cell4 = ws4["A1"]
-    cell4.value = "📊 گزارش تحلیلی ساختار فنی و تفکیک ماژولار سامانه ترافیک تهران (Transit Architecture)"
+    cell4.value = "📊 گزارش تحلیلی ساختار فنی و تفکیک ماژولار فرانت‌اند ترافیک تهران (Frontend Architecture)"
     cell4.font = title_font
     cell4.fill = title_fill
     cell4.alignment = align_center
@@ -749,13 +672,13 @@ def build_inventory():
     # Pills row
     ws4.row_dimensions[3].height = 26.0
     ws4.merge_cells("A3:B3")
-    ws4["A3"].value = "📌 پروژه: سامانه مانیتورینگ آنلاین ترافیک تهران"
+    ws4["A3"].value = "📌 پروژه: فرانت‌اند سامانه مانیتورینگ ترافیک تهران"
     ws4["A3"].font = pill_font
     ws4["A3"].fill = pill_fill
     ws4["A3"].alignment = align_right
 
     ws4.merge_cells("C3:E3")
-    ws4["C3"].value = "🏗️ معماری: Next.js 15 + TypeScript + WordPress REST API (۳۰ ماژول)"
+    ws4["C3"].value = "🏗️ معماری: Next.js 15 + TypeScript (۲۵ ماژول سورس فرانت‌اند خالص)"
     ws4["C3"].font = pill_font
     ws4["C3"].fill = pill_fill
     ws4["C3"].alignment = align_center
@@ -806,29 +729,20 @@ def build_inventory():
         },
         {
             "id": 3,
-            "title": "معماری ساختاری لی‌اوت و ابزارهای هسته (Services)",
-            "components": "Sidebar, Header, DashboardLayout, RootLayout, api.ts, auth.ts, validations.ts, utils.ts, globals.css",
-            "count": "۹ ماژول",
+            "title": "معماری ساختاری لی‌اوت و استایل‌های سراسری",
+            "components": "Sidebar, Header, DashboardLayout, RootLayout, globals.css",
+            "count": "۵ ماژول",
             "origin": "توسعه کاملاً جدید و اختصاصی",
-            "desc": "پیاده‌سازی گارد امنیتی سشن ۲۴ ساعته، سایدبار ناوبری با تفکیک نقش‌ها، اعتبارسنجی اختصاصی IMEI و IP سخت‌افزارها، کلاینت تایپ‌شده REST و تم مدرن دارک.",
+            "desc": "پیاده‌سازی گارد امنیتی سشن ۲۴ ساعته، سایدبار ناوبری با تفکیک نقش‌ها، هدر وضعیت آنلاین سرور و ساعت زنده، و استایل‌های واکنش‌گرا و دارک.",
             "status": "تحویل‌شده (تایید ۱۰۰٪)"
         },
         {
             "id": 4,
-            "title": "وب‌سرویس و معماری بک‌اند وردپرس (REST API)",
-            "components": "citibig-transit-dashboard.php, class-citibig-api.php, class-citibig-db.php, class-citibig-admin.php",
+            "title": "لایه سرویس‌ها، ارتباط با وب‌سرویس و ابزارهای هسته",
+            "components": "api.ts, auth.ts, validations.ts, utils.ts",
             "count": "۴ ماژول",
-            "origin": "توسعه و تفکیک معماری اختصاصی",
-            "desc": "ایجاد اندپوینت‌های اختصاصی citibig/v1، بهینه‌سازی کوئری‌های SQL جداول Station و Route و device_station_mapping، و استخراج فیلد station_custom.",
-            "status": "تحویل‌شده (تایید ۱۰۰٪)"
-        },
-        {
-            "id": 5,
-            "title": "پایپ‌لاین استقرار خودکار و ابزارهای DevOps",
-            "components": "deploy-v2.py (انتقال خودکار FTP و تنظیم دسترسی سرور)",
-            "count": "۱ اسکریپت",
-            "origin": "توسعه اختصاصی",
-            "desc": "پایپ‌لاین اتوماتیک انتقال پروداکشن به هاست لینوکس cPanel، استخراج بدون قطعی و تنظیم پرمیشن‌های پوشه‌ها (755) و فایل‌ها (644).",
+            "origin": "توسعه کاملاً جدید و اختصاصی",
+            "desc": "کلاینت تایپ‌شده REST API، مدیریت نشست‌های ۲۴ ساعته کاربران، اعتبارسنجی فرمت ۱۵ رقمی IMEI و IP، و توابع تبدیل اعداد فارسی.",
             "status": "تحویل‌شده (تایید ۱۰۰٪)"
         }
     ]
@@ -880,43 +794,43 @@ def build_inventory():
         cG.fill = row_fill
         cG.border = border_thin
 
-    # Summary Total Row
-    total_row = 11
+    # Summary Total Row on Row 10
+    total_row = 10
     ws4.row_dimensions[total_row].height = 32.0
-    ws4.merge_cells("A11:C11")
-    ws4["A11"].value = "💎 جمع کل ماژول‌های سامانه مانیتورینگ ترافیک تهران (تفکیک ۳۰٪ مشترک / ۷۰٪ جدید):"
-    ws4["A11"].font = total_font
-    ws4["A11"].fill = total_fill
-    ws4["A11"].alignment = align_right
-    ws4["A11"].border = border_thick_bottom
-    ws4["B11"].border = border_thick_bottom
-    ws4["C11"].border = border_thick_bottom
+    ws4.merge_cells("A10:C10")
+    ws4["A10"].value = "💎 جمع کل ماژول‌های فرانت‌اند سامانه ترافیک تهران (تفکیک ۳۶٪ مشترک / ۶۴٪ جدید):"
+    ws4["A10"].font = total_font
+    ws4["A10"].fill = total_fill
+    ws4["A10"].alignment = align_right
+    ws4["A10"].border = border_thick_bottom
+    ws4["B10"].border = border_thick_bottom
+    ws4["C10"].border = border_thick_bottom
 
-    ws4["D11"].value = "۳۰ ماژول سورس"
-    ws4["D11"].font = total_font
-    ws4["D11"].fill = total_fill
-    ws4["D11"].alignment = align_center
-    ws4["D11"].border = border_thick_bottom
+    ws4["D10"].value = "۲۵ ماژول فرانت‌اند"
+    ws4["D10"].font = total_font
+    ws4["D10"].fill = total_fill
+    ws4["D10"].alignment = align_center
+    ws4["D10"].border = border_thick_bottom
 
-    ws4.merge_cells("E11:F11")
-    ws4["E11"].value = "صرفه‌جویی معادل حداقل ۸۰ نفر-ساعت با بهره‌گیری هوشمند از ماژول‌های آماده"
-    ws4["E11"].font = data_font_bold
-    ws4["E11"].fill = total_fill
-    ws4["E11"].alignment = align_center
-    ws4["E11"].border = border_thick_bottom
-    ws4["F11"].border = border_thick_bottom
+    ws4.merge_cells("E10:F10")
+    ws4["E10"].value = "صرفه‌جویی معادل حداقل ۸۰ نفر-ساعت با بهره‌گیری هوشمند از ماژول‌های دیزاین‌سیستم"
+    ws4["E10"].font = data_font_bold
+    ws4["E10"].fill = total_fill
+    ws4["E10"].alignment = align_center
+    ws4["E10"].border = border_thick_bottom
+    ws4["F10"].border = border_thick_bottom
 
-    ws4["G11"].value = "✅ آماده بهره‌برداری کامل"
-    ws4["G11"].font = status_font
-    ws4["G11"].fill = total_fill
-    ws4["G11"].alignment = align_center
-    ws4["G11"].border = border_thick_bottom
+    ws4["G10"].value = "✅ آماده بهره‌برداری کامل"
+    ws4["G10"].font = status_font
+    ws4["G10"].fill = total_fill
+    ws4["G10"].alignment = align_center
+    ws4["G10"].border = border_thick_bottom
 
     # Key Highlights section
-    ws4.row_dimensions[13].height = 24.0
-    ws4.merge_cells("A13:G13")
-    ws4["A13"].value = "🌟 مزایای فنی و استراتژیک این تفکیک ماژولار برای کارفرما:"
-    ws4["A13"].font = Font(name=font_family, size=10.5, bold=True, color='0F172A')
+    ws4.row_dimensions[12].height = 24.0
+    ws4.merge_cells("A12:G12")
+    ws4["A12"].value = "🌟 مزایای فنی و استراتژیک این تفکیک ماژولار فرانت‌اند برای کارفرما:"
+    ws4["A12"].font = Font(name=font_family, size=10.5, bold=True, color='0F172A')
 
     highlights = [
         "۱. کاهش هزینه‌ها و تسریع چشمگیر پروژه: با انتقال ۹ کامپوننت اثبات‌شده از پکیج مشترک، از دوباره‌کاری صدها خط کد جدول، فیلتر و فرم جلوگیری شد.",
@@ -925,7 +839,7 @@ def build_inventory():
         "۴. تایپ‌سیف بودن ۱۰۰٪ (TypeScript Strict): کل کدبیس فرانت با دستور npx tsc --noEmit با ۰ خطای کامپایل تایید شده است."
     ]
 
-    for idx, h_line in enumerate(highlights, 14):
+    for idx, h_line in enumerate(highlights, 13):
         ws4.row_dimensions[idx].height = 22.0
         ws4.merge_cells(f"A{idx}:G{idx}")
         c = ws4[f"A{idx}"]
@@ -945,10 +859,9 @@ def build_inventory():
     for col_letter, width in col_widths4.items():
         ws4.column_dimensions[col_letter].width = width
 
-    # Save workbook
     output_path = r"c:\SharedProjects\ترافیک تهران\SYSTEM_MODULES_INVENTORY.xlsx"
     wb.save(output_path)
-    print(f"Workbook successfully saved to: {output_path}")
+    print(f"Workbook successfully saved with 25 pure frontend modules: {output_path}")
 
 if __name__ == "__main__":
     build_inventory()
