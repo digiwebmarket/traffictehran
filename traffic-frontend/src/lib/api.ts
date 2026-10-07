@@ -1,4 +1,4 @@
-﻿import { getStoredSession } from './auth';
+import { getStoredSession } from './auth';
 
 const DEFAULT_BRIDGE_URL = typeof window !== 'undefined' && window.location.hostname === 'dev.citibig.com'
   ? '/v2tehrandashboard/citibig-bridge.php'
@@ -206,6 +206,7 @@ export interface DeviceItem {
   ip?: string;
   station_code: string | number;
   Station_Name?: string;
+  station_custom?: string;
   created_at?: string;
 }
 

@@ -736,7 +736,9 @@ class Citibig_Transit_DB {
         $link = self::get_connection();
         if ( ! $link ) return $data;
 
-        $sql = "SELECT d.id, d.imei, d.ip, d.station_code, IFNULL(s.Station_Name, CONCAT('ایستگاه کد ', d.station_code)) as Station_Name 
+        $sql = "SELECT d.id, d.imei, d.ip, d.station_code, 
+                       IFNULL(s.Station_Name, CONCAT('ایستگاه کد ', d.station_code)) as Station_Name,
+                       s.station_custom
                 FROM device_station_mapping d 
                 LEFT JOIN Station s ON d.station_code = s.code 
                 ORDER BY d.id DESC";

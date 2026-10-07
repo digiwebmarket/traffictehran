@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { Monitor, Plus, Edit3, Trash2, RefreshCw, AlertCircle, Check, X } from 'lucide-react';
+import { Monitor, Plus, Edit3, Trash2, RefreshCw, AlertCircle, Check, X, Filter, RotateCcw } from 'lucide-react';
 import { apiGetDevices, apiGetStations, apiSaveDevice, apiDeleteDevice, DeviceItem, StationItem } from '@/lib/api';
 import { getStoredSession } from '@/lib/auth';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { AdvancedFilterBar, FilterField } from '@/components/ui/AdvancedFilterBar';
 import { SearchableSelect, SearchableOption } from '@/components/ui/SearchableSelect';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -49,38 +48,65 @@ export default function DevicesPage() {
     loadData();
   }, []);
 
-  const filterFields: FilterField[] = [
-    { id: 'imei', label: 'کد IMEI', placeholder: 'فیلتر کد IMEI...' },
-    { id: 'ip', label: 'آدرس IP', placeholder: 'فیلتر آدرس IP...' },
-    { id: 'station_name', label: 'نام ایستگاه', placeholder: 'فیلتر نام ایستگاه...' },
-    { id: 'station_code', label: 'کد ایستگاه', placeholder: 'فیلتر شماره ایستگاه...' },
-  ];
+  // Station options for table filter (searches from full Station table)
+  const filterStationOptions: SearchableOption[] = useMemo(() => {
+    return stations.map((st) => {
+      const customPart = st.station_custom ? ` (${st.station_custom})` : '';
+      return {
+        label: `کد ${toPersianDigits(st.code)} - ${st.Station_Name}${customPart}`,
+        value: String(st.code),
+      };
+    });
+  }, [stations]);
 
   const filteredData = useMemo(() => {
     return devices.filter((dev) => {
+      // 1. Filter by IMEI
       if (filters.imei) {
         const normFilter = toEnglishDigits(filters.imei.toLowerCase().trim());
         const normVal = toEnglishDigits(String(dev.imei).toLowerCase());
         if (!normVal.includes(normFilter)) return false;
       }
+
+      // 2. Filter by IP
       if (filters.ip) {
         const normFilter = toEnglishDigits(filters.ip.toLowerCase().trim());
         const normVal = toEnglishDigits(String(dev.ip || '').toLowerCase());
         if (!normVal.includes(normFilter)) return false;
       }
-      if (filters.station_name) {
-        const normFilter = toEnglishDigits(filters.station_name.toLowerCase().trim());
-        const normVal = toEnglishDigits((dev.Station_Name || '').toLowerCase());
-        if (!normVal.includes(normFilter)) return false;
-      }
+
+      // 3. Filter by Selected Station from Station Combobox
       if (filters.station_code) {
-        const normFilter = toEnglishDigits(filters.station_code.toLowerCase().trim());
-        const normVal = toEnglishDigits(String(dev.station_code).toLowerCase());
-        if (!normVal.includes(normFilter)) return false;
+        const selectedCode = toEnglishDigits(String(filters.station_code).trim());
+        const devCode = toEnglishDigits(String(dev.station_code).trim());
+        if (devCode !== selectedCode) return false;
       }
+
+      // 4. Filter by Free-Text Station Search (matches station_code, Station_Name, and station_custom)
+      if (filters.station_text) {
+        const normFilter = toEnglishDigits(filters.station_text.toLowerCase().trim());
+        const normName = toEnglishDigits((dev.Station_Name || '').toLowerCase());
+        const normCustom = toEnglishDigits((dev.station_custom || '').toLowerCase());
+        const normCode = toEnglishDigits(String(dev.station_code).toLowerCase());
+
+        // Also cross-reference against the full station record in stations table
+        const matchingStation = stations.find((st) => String(st.code) === String(dev.station_code));
+        const refName = matchingStation ? toEnglishDigits(matchingStation.Station_Name.toLowerCase()) : '';
+        const refCustom = matchingStation?.station_custom ? toEnglishDigits(matchingStation.station_custom.toLowerCase()) : '';
+
+        const matches =
+          normName.includes(normFilter) ||
+          normCustom.includes(normFilter) ||
+          normCode.includes(normFilter) ||
+          refName.includes(normFilter) ||
+          refCustom.includes(normFilter);
+
+        if (!matches) return false;
+      }
+
       return true;
     });
-  }, [devices, filters]);
+  }, [devices, filters, stations]);
 
   // Map of stations already assigned to other devices
   const assignedStationMap = useMemo(() => {
@@ -211,10 +237,17 @@ export default function DevicesPage() {
     },
     {
       key: 'Station_Name',
-      title: 'نام ایستگاه متصل',
+      title: 'ایستگاه متصل',
       width: '30%',
       render: (item) => (
-        <span className="font-semibold text-slate-100">{item.Station_Name || '-'}</span>
+        <div className="flex flex-col gap-0.5">
+          <span className="font-semibold text-slate-100">{item.Station_Name || '-'}</span>
+          {item.station_custom && (
+            <span className="text-[11px] text-amber-400 font-normal">
+              نام سفارشی: {item.station_custom}
+            </span>
+          )}
+        </div>
       ),
     },
     {
@@ -309,11 +342,74 @@ export default function DevicesPage() {
         exportFileName="tehran-devices"
         pageSize={20}
         headerFilterBar={
-          <AdvancedFilterBar
-            fields={filterFields}
-            onFilterChange={setFilters}
-            onReset={() => setFilters({})}
-          />
+          <div className="w-full bg-slate-950/60 border-b border-slate-800/80 p-3.5 flex flex-wrap items-center gap-3 text-xs">
+            <div className="flex items-center gap-1.5 text-slate-400 font-semibold pl-2">
+              <Filter className="w-3.5 h-3.5 text-brand-400" />
+              <span>فیلترهای جدول:</span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5 flex-1">
+              {/* IMEI Filter */}
+              <div className="flex items-center gap-1.5 min-w-[140px]">
+                <span className="text-slate-400 text-[11px] whitespace-nowrap">کد IMEI:</span>
+                <input
+                  type="text"
+                  value={filters.imei || ''}
+                  onChange={(e) => setFilters((prev) => ({ ...prev, imei: e.target.value }))}
+                  placeholder="IMEI..."
+                  className="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 dir-ltr"
+                />
+              </div>
+
+              {/* IP Filter */}
+              <div className="flex items-center gap-1.5 min-w-[130px]">
+                <span className="text-slate-400 text-[11px] whitespace-nowrap">آدرس IP:</span>
+                <input
+                  type="text"
+                  value={filters.ip || ''}
+                  onChange={(e) => setFilters((prev) => ({ ...prev, ip: e.target.value }))}
+                  placeholder="IP..."
+                  className="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 dir-ltr"
+                />
+              </div>
+
+              {/* Station Filter from Station Table (Combobox) */}
+              <div className="flex items-center gap-1.5 min-w-[240px] flex-1 max-w-sm">
+                <span className="text-slate-400 text-[11px] whitespace-nowrap">انتخاب ایستگاه:</span>
+                <div className="w-full">
+                  <SearchableSelect
+                    options={filterStationOptions}
+                    value={filters.station_code || ''}
+                    onChange={(val) => setFilters((prev) => ({ ...prev, station_code: String(val) }))}
+                    placeholder="جستجو و انتخاب از جدول ایستگاه‌ها..."
+                    searchPlaceholder="جستجوی نام، دلخواه یا کد ایستگاه..."
+                  />
+                </div>
+              </div>
+
+              {/* Free Text Station Search (Name / Custom / Code) */}
+              <div className="flex items-center gap-1.5 min-w-[160px]">
+                <span className="text-slate-400 text-[11px] whitespace-nowrap">جستجوی متنی:</span>
+                <input
+                  type="text"
+                  value={filters.station_text || ''}
+                  onChange={(e) => setFilters((prev) => ({ ...prev, station_text: e.target.value }))}
+                  placeholder="نام، دلخواه یا کد ایستگاه..."
+                  className="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                />
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setFilters({})}
+              title="بازنشانی فیلترها"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>بازنشانی</span>
+            </button>
+          </div>
         }
       />
 
