@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { Bus, User, Lock, AlertCircle } from 'lucide-react';
 import { apiLogin } from '@/lib/api';
 import { saveSession, getStoredSession } from '@/lib/auth';
@@ -49,31 +48,30 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-950">
-      {/* Background Image with Dark Vignette & Atmospheric Overlay */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <Image
-          src="/images/login-bg.jpg"
+    <div
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-950 bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: "url('/v2tehrandashboard/images/login-bg.jpg')",
+      }}
+    >
+      {/* Background Image with Crisp Contrast & Subtle Vignette */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <img
+          src="/v2tehrandashboard/images/login-bg.jpg"
           alt="ایستگاه اتوبوسرانی و سامانه مانیتورینگ ترافیک تهران"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center scale-105"
+          className="w-full h-full object-cover object-center select-none"
         />
-        {/* Layer 1: Dark tint for high contrast */}
-        <div className="absolute inset-0 bg-slate-950/70" />
-        {/* Layer 2: Ambient blur to keep text sharp */}
-        <div className="absolute inset-0 backdrop-blur-[2px]" />
-        {/* Layer 3: Vignette gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/80" />
+        {/* Subtle Dark Vignette: keeps the red BRT bus and autumn trees vibrant while ensuring WCAG AA contrast */}
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/40" />
       </div>
 
       {/* Decorative ambient glowing orbs */}
-      <div className="absolute top-1/4 -right-20 w-96 h-96 bg-brand-500/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 -right-20 w-96 h-96 bg-brand-500/15 rounded-full blur-3xl pointer-events-none z-0" />
+      <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none z-0" />
 
       {/* Glassmorphic Login Card */}
-      <div className="w-full max-w-md bg-slate-900/85 border border-white/10 rounded-3xl p-7 sm:p-8 shadow-2xl shadow-black/80 backdrop-blur-2xl relative z-10 animate-fadeIn">
+      <div className="w-full max-w-md bg-slate-900/90 border border-white/15 rounded-3xl p-7 sm:p-8 shadow-2xl shadow-black/90 backdrop-blur-2xl relative z-10 animate-fadeIn">
         <div className="text-center space-y-3 mb-8">
           <div className="inline-flex p-3.5 rounded-2xl bg-gradient-to-tr from-brand-600 via-rose-600 to-amber-500 text-white shadow-lg shadow-brand-500/25">
             <Bus className="w-8 h-8" />
