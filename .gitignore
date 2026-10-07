@@ -10,8 +10,10 @@
 __pycache__/
 *.pyc
 
-# Graphify cache
+# Graphify cache & backups
 graphify-out/cache/
+graphify-out/converted/
+graphify-out/20*/
 
 # Syncthing temporary & conflict files
 *sync-conflict*
